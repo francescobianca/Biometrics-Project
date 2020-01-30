@@ -1,4 +1,4 @@
-package it.sapienza.cs.biometrics_service;
+package it.sapienza.cs.biometrics;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
