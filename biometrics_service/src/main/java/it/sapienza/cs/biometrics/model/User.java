@@ -12,6 +12,7 @@ public abstract class User {
 	private String firstName;
 	private String lastName;
 	private String profilePicture;
+	private boolean type; //0 for professor, 1 for student
 	
 	public User() {
 	
@@ -55,6 +56,14 @@ public abstract class User {
 
 	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
+	}
+
+	public boolean isType() {
+		return type;
+	}
+
+	public void setType(boolean type) {
+		this.type = type;
 	}
 
 	@Override

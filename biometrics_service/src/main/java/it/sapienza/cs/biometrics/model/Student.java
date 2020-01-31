@@ -2,6 +2,7 @@ package it.sapienza.cs.biometrics.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
@@ -26,7 +27,7 @@ public class Student extends User {
 			@JoinColumn(name = "lectureId") })
 	private Set<Lecture> attendedLectures;
 	
-	@OneToMany(mappedBy = "student")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = CascadeType.ALL)
 	private Set<StudentImage> images;
 	
 	public Student() {
