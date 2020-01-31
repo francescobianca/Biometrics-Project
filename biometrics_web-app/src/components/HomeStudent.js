@@ -19,6 +19,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Chart from './Chart';
 import Fab from '@material-ui/core/Fab'
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto'
@@ -139,6 +141,15 @@ export default function Dashboard({history}) {
     if (imagePath === "null") 
         imagePath = require('../resources/default.png');
 
+    var followingCourses = Cookies.get("followingCourses");
+    var followingCoursesJSON =  JSON.parse(followingCourses);
+    var arrFollowingCourses = [];
+    Object.keys(followingCoursesJSON).forEach(function(key) {
+      arrFollowingCourses.push(followingCoursesJSON[key]);
+    });
+
+    console.log(arrFollowingCourses);
+
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -221,7 +232,17 @@ export default function Dashboard({history}) {
             <Grid item xs={12}>
               <Paper className={classes.paper}>
                
-
+              {arrFollowingCourses.map((course) => (
+                    <div key={course.code}>
+                    <ListItem className={classes.courseItem} item xs={12}>
+                        <ListItem button>
+                            <ListItemText >{course.name}</ListItemText>
+                        </ListItem>
+                       
+                    </ListItem>
+                    <Divider></Divider>
+                </div>
+               ))}
 
               </Paper>
             </Grid>

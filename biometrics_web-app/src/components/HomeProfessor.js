@@ -230,7 +230,7 @@ export default function Dashboard({history}) {
             {/* Professor Course */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-              <div className={classes.coursesContainer}> 
+              
                 {arr.map((course) => (
                     <div key={course.code}>
                     <ListItem className={classes.courseItem} item xs={12}>
@@ -242,7 +242,7 @@ export default function Dashboard({history}) {
                     <Divider></Divider>
                 </div>
             ))}
-                   </div>
+                 
                    
               </Paper>
             

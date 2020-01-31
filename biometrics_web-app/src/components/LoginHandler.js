@@ -62,7 +62,7 @@ export default function LoginHandler ({history}) {
         Cookies.set("matricolaStudent", data.matricola);
         Cookies.set("firstNameStudent", data.firstName);
         Cookies.set("lastNameStudent", data.lastName);
-        //Cookies.set("createdCourses", data.createdCourses);
+        Cookies.set("followingCourses", data.followingCourses);
         Cookies.set("profilePictureStudent", data.profilePicture);
         //var subscribedCourses = data.followingCourses;
         //subscribedCourses.sort((a, b) => (a.subject > b.subject) ? 1 : -1)
