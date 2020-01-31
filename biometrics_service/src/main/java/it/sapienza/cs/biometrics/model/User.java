@@ -1,11 +1,9 @@
 package it.sapienza.cs.biometrics.model;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
-@Entity
-@Table(name = "User")
+@MappedSuperclass
 public abstract class User {
 
 	@Id
