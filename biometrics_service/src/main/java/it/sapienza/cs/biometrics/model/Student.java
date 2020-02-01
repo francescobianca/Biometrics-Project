@@ -11,6 +11,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Student")
 public class Student extends User {
@@ -25,6 +27,7 @@ public class Student extends User {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "attendances", joinColumns = { @JoinColumn(name = "matricola") }, inverseJoinColumns = {
 			@JoinColumn(name = "lectureId") })
+	@JsonIgnore
 	private Set<Lecture> attendedLectures;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = CascadeType.ALL)

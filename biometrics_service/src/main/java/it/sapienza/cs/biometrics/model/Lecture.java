@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Lecture")
 public class Lecture {
@@ -26,9 +28,11 @@ public class Lecture {
 	private Date date;
 	
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "attendedLectures")
+	@JsonIgnore
 	private Set<Student> students;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Course course;
 
 	public Lecture() {

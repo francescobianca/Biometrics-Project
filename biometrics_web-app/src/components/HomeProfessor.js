@@ -12,6 +12,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
+import CheckIcon from '@material-ui/icons/Check';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
@@ -28,6 +29,8 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
 import Cookies from 'js-cookie'
 import { createBrowserHistory } from "history";
+import Title from './Title';
+import BaseInstance from '../http-client/BaseInstance'
 
 function Copyright() {
   return (
@@ -148,7 +151,7 @@ export default function Dashboard({history}) {
       arr.push(coursesJSON[key]);
     });
 
-    console.log(arr);
+    //console.log(arr);
 
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
@@ -159,6 +162,14 @@ export default function Dashboard({history}) {
     setOpen(false);
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    const openCoursePage = (course, code) => {
+        Cookies.set("selectedCourse", course);
+        BaseInstance.get("getCourseLectures", { params: { "code": code } }).then(res => {
+          Cookies.set("courseLectures",res.data)
+        })
+        history.push('/professorCoursePage');
+    }
 
   return (
     <div className={classes.root}>
@@ -177,11 +188,7 @@ export default function Dashboard({history}) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Home Page Professore
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+          
         </Toolbar>
       </AppBar>
       <Drawer
@@ -205,13 +212,10 @@ export default function Dashboard({history}) {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
+
+         
+
+             {/* Profile Picture */}
             <Grid item xs={12} md={4} lg={3}>
             <React.Fragment>
                 <div style={{"margin-bottom" : "-40px"}}>
@@ -228,16 +232,20 @@ export default function Dashboard({history}) {
             </Grid>
 
             {/* Professor Course */}
+            
             <Grid item xs={12}>
               <Paper className={classes.paper}>
-              
+              <Title>List of courses</Title>
                 {arr.map((course) => (
                     <div key={course.code}>
                     <ListItem className={classes.courseItem} item xs={12}>
                         <ListItem button>
+                            <ListItemText >{course.code}</ListItemText>
+                        </ListItem>
+                        <ListItem button>
                             <ListItemText >{course.name}</ListItemText>
                         </ListItem>
-                       
+                        <IconButton onClick={() => { openCoursePage(course,course.code) }}> <CheckIcon /> </IconButton>
                     </ListItem>
                     <Divider></Divider>
                 </div>

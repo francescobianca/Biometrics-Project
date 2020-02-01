@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 @Entity
 @Table(name = "Course")
 public class Course {
@@ -22,12 +25,15 @@ public class Course {
 	private String name;
 	
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "followingCourses")
+	@JsonIgnore
 	private Set<Student> students;
 	
 	@OneToMany(mappedBy = "course")
+	@JsonIgnore
 	private Set<Lecture> lectures;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Professor professor;
 
 	public Course() {

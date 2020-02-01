@@ -69,8 +69,8 @@ public class LoginService {
 					System.out.println("Sono loggato come studente");
 					
 					// Gestioni casi studente
-					Set<Course> followingCourse = courseDAO.findByStudentsMatricola(isStudent.getMatricola());
-					isStudent.setFollowingCourses(followingCourse);
+					//Set<Course> followingCourse = courseDAO.findByStudentsMatricola(isStudent.getMatricola());
+					//isStudent.setFollowingCourses(followingCourse);
 					
 					return isStudent;
 				}

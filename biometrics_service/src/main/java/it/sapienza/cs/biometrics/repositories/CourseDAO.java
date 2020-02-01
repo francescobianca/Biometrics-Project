@@ -10,5 +10,5 @@ import it.sapienza.cs.biometrics.model.Course;
 public interface CourseDAO extends CrudRepository<Course, Integer> {
 
 	Set<Course> findByProfessorMatricola(String matricola);
-	Set<Course> findByStudentsMatricola(String matricola);
+	
 }

@@ -178,11 +178,7 @@ export default function Dashboard({history}) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Home Page Studenti
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+          
         </Toolbar>
       </AppBar>
       <Drawer
@@ -206,12 +202,9 @@ export default function Dashboard({history}) {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
+
+            
+
             {/* Profile Picture */}
             <Grid item xs={12} md={4} lg={3}>
             <React.Fragment>

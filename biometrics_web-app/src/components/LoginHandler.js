@@ -35,6 +35,8 @@ export default function LoginHandler ({history}) {
     // Da sistemare questa parte
     /*if(Cookies.get("matricola") !== undefined)
         history.push("/home");*/
+
+        
     Cookies.remove("currentCourse")
     const [matricola, setMatricola] = useState("");
     const [password, setPassword] = useState("");

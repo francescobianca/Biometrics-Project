@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,9 @@ import it.sapienza.cs.biometrics.services.CourseService;
 import it.sapienza.cs.biometrics.services.LoginService;
 import it.sapienza.cs.biometrics.services.UploadImageService;
 import it.sapienza.cs.biometrics.model.Course;
+import it.sapienza.cs.biometrics.model.Lecture;
 import it.sapienza.cs.biometrics.model.User;
+import it.sapienza.cs.biometrics.model.DTO.LectureDTO;
 import it.sapienza.cs.biometrics.model.DTO.LectureDeletionDTO;
 import it.sapienza.cs.biometrics.model.DTO.ProfessorDTO;
 import it.sapienza.cs.biometrics.model.DTO.UserLoginDTO;
@@ -47,15 +50,20 @@ public class BiometricController {
 		return courseService.getProfessorCourses(professorDTO.getMatricola());
 	}
 	
+	@GetMapping("/getCourseLectures")
+	public Set<Lecture> getCourseLectures(@RequestParam String code) {
+		return courseService.getCourseLectures(code);
+	}
+	
 	/*@GetMapping("/getAllCoursesAvailable")
 	public Set<Course> getAllCoursesAvailable(@RequestBody UserDTO userDTO) {
 		return courseService.getAllCoursesAvailable(userDTO.getEmail());
 	}*/
 	
-	/*@PostMapping("/createLecture")
+	@PostMapping("/createLecture")
 	public Lecture createLecture(@RequestBody LectureDTO lectureDTO) {
 		return courseService.createLecture(lectureDTO);
-	}*/
+	}
 	
 	/*@PostMapping("/deleteLecture")
 	public String deleteLecture(@RequestBody LectureDeletionDTO deleteLectureDTO) {
