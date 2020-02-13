@@ -4,12 +4,11 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,14 +25,16 @@ public class Lecture {
 	private String description;
 	@Temporal(TemporalType.DATE)
 	private Date date;
-	
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "attendedLectures")
+
+	@OneToMany(mappedBy = "lecture")
 	@JsonIgnore
-	private Set<Student> students;
-	
+	Set<Attendances> attendances;
+
 	@ManyToOne
 	@JsonIgnore
 	private Course course;
+	
+	private boolean lectureEnd;
 
 	public Lecture() {
 
@@ -62,13 +63,13 @@ public class Lecture {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	public Set<Student> getStudents() {
-		return students;
+
+	public Set<Attendances> getAttendances() {
+		return attendances;
 	}
 
-	public void setStudents(Set<Student> students) {
-		this.students = students;
+	public void setAttendances(Set<Attendances> attendances) {
+		this.attendances = attendances;
 	}
 
 	public Course getCourse() {
@@ -77,6 +78,14 @@ public class Lecture {
 
 	public void setCourse(Course course) {
 		this.course = course;
+	}
+	
+	public boolean isLectureEnd() {
+		return lectureEnd;
+	}
+	
+	public void setLectureEnd(boolean lectureEnd) {
+		this.lectureEnd = lectureEnd;
 	}
 
 	@Override
