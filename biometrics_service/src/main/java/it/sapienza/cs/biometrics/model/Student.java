@@ -24,11 +24,15 @@ public class Student extends User {
 			@JoinColumn(name = "code") })
 	private Set<Course> followingCourses;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	/*@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "attendances", joinColumns = { @JoinColumn(name = "matricola") }, inverseJoinColumns = {
 			@JoinColumn(name = "lectureId") })
 	@JsonIgnore
-	private Set<Lecture> attendedLectures;
+	private Set<Lecture> attendedLectures;*/
+	
+	@OneToMany(mappedBy = "student")
+	@JsonIgnore
+    Set<Attendances> attendances;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "student", cascade = CascadeType.ALL)
 	private Set<StudentImage> images;
@@ -53,12 +57,12 @@ public class Student extends User {
 		this.followingCourses = followingCourses;
 	}
 
-	public Set<Lecture> getAttendedLectures() {
-		return attendedLectures;
+	public Set<Attendances> getAttendances() {
+		return attendances;
 	}
-
-	public void setAttendedLectures(Set<Lecture> attendedLectures) {
-		this.attendedLectures = attendedLectures;
+	
+	public void setAttendances(Set<Attendances> attendances) {
+		this.attendances = attendances;
 	}
 	
 	public Set<StudentImage> getImages() {

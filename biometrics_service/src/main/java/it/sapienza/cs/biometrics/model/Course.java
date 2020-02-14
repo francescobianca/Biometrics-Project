@@ -35,6 +35,8 @@ public class Course {
 	@ManyToOne
 	@JsonIgnore
 	private Professor professor;
+	
+	private boolean registrationClosed;
 
 	public Course() {
 
@@ -70,6 +72,14 @@ public class Course {
 
 	public void setLectures(Set<Lecture> lectures) {
 		this.lectures = lectures;
+	}
+	
+	public boolean isRegistrationClosed() {
+		return registrationClosed;
+	}
+	
+	public void setRegistrationClosed(boolean registrationClosed) {
+		this.registrationClosed = registrationClosed;
 	}
 
 	@Override
