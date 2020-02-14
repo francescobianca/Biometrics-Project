@@ -66,12 +66,11 @@ public class BiometricController {
 	public Set<Course> getCourseAvailable(@RequestParam String matricola) {
 		return courseService.getAvailableCourse(matricola);
 	}
-
-	/*
-	 * @GetMapping("/getAllCoursesAvailable") public Set<Course>
-	 * getAllCoursesAvailable(@RequestBody UserDTO userDTO) { return
-	 * courseService.getAllCoursesAvailable(userDTO.getEmail()); }
-	 */
+	
+	@GetMapping("/subscribeCourse")
+	public void subscribeCourse(@RequestParam Integer courseId, @RequestParam String matricola) {
+		courseService.subscribe(courseId, matricola);
+	}
 
 	@PostMapping("/createLecture")
 	public Lecture createLecture(@RequestBody LectureDTO lectureDTO) {
@@ -82,18 +81,6 @@ public class BiometricController {
 	public void closeLecture(@RequestParam Integer lectureId) {
 		courseService.closeLecture(lectureId);
 	}
-	
-	/*
-	 * @PostMapping("/deleteLecture") public String deleteLecture(@RequestBody
-	 * LectureDeletionDTO deleteLectureDTO) { return
-	 * courseService.deleteLecture(deleteLectureDTO); }
-	 */
-
-	/*
-	 * @PostMapping("/updateProfilePicture") public String
-	 * updateProfilePicture(@RequestBody MultipartFile file) { return
-	 * uploadImageService.updateProfilePicture(file); }
-	 */
 
 	@GetMapping("/getSheet")
 	public String downloadSheet(@RequestParam Integer lectureId) {

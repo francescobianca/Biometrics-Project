@@ -57,6 +57,14 @@ public class CourseService {
 		SetView<Course> difference = Sets.difference(available, followed);
 		return difference;
 	}
+	
+	public void subscribe(Integer courseId, String matricola) {
+		Student s = studentDAO.findById(matricola).get();
+		Course c = courseDAO.findById(courseId).get();
+		
+		s.getFollowingCourses().add(c);
+		studentDAO.save(s);
+	}
 
 	public Set<Lecture> getCourseLectures(String code) {
 		Integer id = Integer.parseInt(code);

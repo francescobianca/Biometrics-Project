@@ -17,16 +17,18 @@ import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Chart from './Chart';
+import Title from './Title';
 import Fab from '@material-ui/core/Fab'
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Avatar } from '@material-ui/core'
-
+import BaseInstance from '../http-client/BaseInstance'
 import Cookies from 'js-cookie'
 import { createBrowserHistory } from "history";
 
@@ -148,10 +150,42 @@ export default function Dashboard({history}) {
       arrFollowingCourses.push(followingCoursesJSON[key]);
     });
 
-    console.log(arrFollowingCourses);
+    var availableCourse = Cookies.get("availableCourse");
+    //console.log(availableCourse)
+
+    //console.log(availableCourse)
+    var availableCourseJSON = JSON.parse(availableCourse)
+    //console.log(availableCourseJSON)
+    var arrAvailableCourses = [];
+
+    Object.keys(availableCourseJSON).forEach(function(key) {
+      arrAvailableCourses.push(availableCourseJSON[key]);
+    });
+
+    console.log(arrAvailableCourses);
 
     var studentName = Cookies.get("firstNameStudent");
     var studentSurname = Cookies.get("lastNameStudent")
+    var studentMatricola = Cookies.get("matricolaStudent");
+
+    const subscribe = (courseId,courseItem) => {
+      console.log(courseId)
+      BaseInstance.get("subscribeCourse", { params: { "courseId": courseId, "matricola" : studentMatricola} }).then(res => {
+          console.log(res.data)
+      })
+      /*console.log("prima");
+      console.log(arrFollowingCourses.length);
+      arrFollowingCourses.push(courseItem);
+      console.log("dopo");
+      console.log(arrFollowingCourses.length);
+
+      console.log("prima");
+      console.log(arrAvailableCourses.length)
+      console.log("dopo");
+      arrAvailableCourses.pop(courseItem)
+      console.log(arrAvailableCourses.length)*/
+      //window.location.reload();
+    }
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -226,14 +260,17 @@ export default function Dashboard({history}) {
             {/* My course */}
             <Grid item xs={12}>
               <Paper className={classes.paper}>
+              <Title>My course:</Title>
                
               {arrFollowingCourses.map((course) => (
                     <div key={course.code}>
                     <ListItem className={classes.courseItem} item xs={12}>
                         <ListItem button>
+                            <ListItemText >{course.code}</ListItemText>
+                        </ListItem>
+                        <ListItem button>
                             <ListItemText >{course.name}</ListItemText>
                         </ListItem>
-                       
                     </ListItem>
                     <Divider></Divider>
                 </div>
@@ -241,6 +278,31 @@ export default function Dashboard({history}) {
 
               </Paper>
             </Grid>
+
+            {/* Available Course */}
+            <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                <Title>Available lessons:</Title>
+                
+                  {arrAvailableCourses.map((courseAvailable) => (
+                      <div key={courseAvailable.code}>
+                      <ListItem className={classes.courseItem} item xs={12}>
+                          <ListItem button>
+                              <ListItemText >{courseAvailable.code}</ListItemText>
+                          </ListItem>
+                          <ListItem button>
+                              <ListItemText >{courseAvailable.name}</ListItemText>
+                          </ListItem>
+                          <Tooltip title="Subscribe at this course" >
+                            <IconButton onClick={() => { subscribe(courseAvailable.code, courseAvailable) }}> <SubscriptionsIcon /> </IconButton>
+                          </Tooltip>
+                      </ListItem>
+                      <Divider></Divider>
+                  </div>
+                ))}
+                
+                </Paper>            
+                </Grid>
 
 
           </Grid>
