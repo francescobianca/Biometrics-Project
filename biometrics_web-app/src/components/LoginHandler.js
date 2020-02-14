@@ -66,6 +66,10 @@ export default function LoginHandler ({history}) {
         Cookies.set("lastNameStudent", data.lastName);
         Cookies.set("followingCourses", data.followingCourses);
         Cookies.set("profilePictureStudent", data.profilePicture);
+
+        BaseInstance.get("getAvailableCourse", { params: { "matricola": data.matricola } }).then(res => {
+            console.log(res.data)
+        })
         //var subscribedCourses = data.followingCourses;
         //subscribedCourses.sort((a, b) => (a.subject > b.subject) ? 1 : -1)
         //Cookies.set("subscribedCourses", subscribedCourses);

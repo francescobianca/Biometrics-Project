@@ -57,6 +57,8 @@ function Copyright() {
   );
 }
 
+
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -141,6 +143,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
 export default function FullWidthGrid({history}) {
 
     if (history === undefined) {
@@ -160,13 +163,13 @@ export default function FullWidthGrid({history}) {
     var selectedCourseJSON = JSON.parse(selectedCourse);
 
     var courseLectures = Cookies.get("courseLectures");
-    var courseLecturesJSON = JSON.parse(courseLectures);
     var courseLecturesArr = [];
+   
+    var courseLecturesJSON = JSON.parse(courseLectures);
     Object.keys(courseLecturesJSON).forEach(function(key) {
         courseLecturesArr.push(courseLecturesJSON[key]);
     });
-
-    //console.log(courseLecturesJSON);
+    
 
     const classes = useStyles();
     //const [open, setOpen] = React.useState(true);
@@ -181,6 +184,9 @@ export default function FullWidthGrid({history}) {
     const [open, setOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date('2020-02-01T21:00:00'))
     const [description, setSelectedDescription] = React.useState("")
+
+    //console.log(selectedCourseJSON.code)
+    //var codeCourse = selectedCourseJSON.code;
     
     const handleClickOpen = () => {
         setOpen(true)
@@ -198,7 +204,17 @@ export default function FullWidthGrid({history}) {
           setSelectedDescription(e.target.value)
       }
 
-      
+      const downloadSheet = (lectureId) => {
+        BaseInstance.get("getSheet", { params: { "lectureId": lectureId } }).then(res => {
+            console.log(res.data)
+            var filename = res.data;
+            BaseInstance.get(filename)
+            window.location = 'http://localhost:8080/'+filename;
+        })
+      }
+
+    //console.log(courseLecturesJSON)
+    //console.log(selectedCourseJSON)
 
     const createLecture = () =>  {
 
@@ -217,6 +233,19 @@ export default function FullWidthGrid({history}) {
 
     var todayLesson = Cookies.get("todayLesson");
     console.log(todayLesson);
+
+    // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
+    const closeLesson = (lectureId) => {
+        console.log(lectureId);
+        BaseInstance.get("closeLecture", { params: { "lectureId": lectureId } }).then(res => {
+            Cookies.remove("todayLesson");
+            //Cookies.remove("selectedCourse");
+            //Cookies.remove("courseLectures");
+            history.push("/homeProfessor");         
+        })
+    }
+
+    // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
 
     if (todayLesson != null) 
         return (
@@ -347,7 +376,7 @@ export default function FullWidthGrid({history}) {
                                 <ListItemText > {JSON.parse(todayLesson).description}</ListItemText>
                             </ListItem>
                             <Tooltip title="Close the attendance registration for this lesson" >
-                                <IconButton > <AssignmentTurnedInIcon /> </IconButton>
+                                <IconButton onClick={() => { closeLesson(JSON.parse(todayLesson).lectureId)}}> <AssignmentTurnedInIcon /> </IconButton>
                             </Tooltip>  
                         </ListItem>
                                 
@@ -369,7 +398,7 @@ export default function FullWidthGrid({history}) {
                                 <ListItemText >{lessons.description}</ListItemText>
                             </ListItem>
                             <Tooltip title="Download the attendance sheet" >
-                                <IconButton > <GetAppIcon /> </IconButton>
+                                <IconButton onClick={() => { downloadSheet(lessons.lectureId) }} > <GetAppIcon /> </IconButton>
                             </Tooltip>
                         </ListItem>
                         <Divider></Divider>
@@ -521,7 +550,7 @@ export default function FullWidthGrid({history}) {
                                 <ListItemText >{lessons.description}</ListItemText>
                             </ListItem>
                             <Tooltip title="Download the attendance sheet" >
-                                <IconButton > <GetAppIcon /> </IconButton>
+                                <IconButton onClick={() => { downloadSheet(lessons.lectureId) }}> <GetAppIcon /> </IconButton>
                             </Tooltip>
                         </ListItem>
                         <Divider></Divider>

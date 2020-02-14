@@ -6,19 +6,27 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
+
 import it.sapienza.cs.biometrics.model.Course;
 import it.sapienza.cs.biometrics.model.Lecture;
 import it.sapienza.cs.biometrics.model.Professor;
+import it.sapienza.cs.biometrics.model.Student;
 import it.sapienza.cs.biometrics.model.DTO.LectureDTO;
 import it.sapienza.cs.biometrics.repositories.CourseDAO;
 import it.sapienza.cs.biometrics.repositories.LectureDAO;
 import it.sapienza.cs.biometrics.repositories.ProfessorDAO;
+import it.sapienza.cs.biometrics.repositories.StudentDAO;
 
 @Service
 public class CourseService {
 
 	@Autowired
 	private ProfessorDAO professorDAO;
+	
+	@Autowired
+	private StudentDAO studentDAO;
 
 	@Autowired
 	private CourseDAO courseDAO;
@@ -38,10 +46,26 @@ public class CourseService {
 		Professor professor = professorDAO.findById(matricola).get();
 		return professor.getTeachedCourses();
 	}
+	
+	// Available Tutti quelli aperti tranne quelli a cui sono già iscritto
+	public Set<Course> getAvailableCourse(String matricola) {
+		//return courseDAO.findByOpenBooking();
+		Set<Course> available = courseDAO.findByOpenBooking();
+		Student s = studentDAO.findById(matricola).get();
+		Set<Course> followed = s.getFollowingCourses();
+		// Differenza tra i set 
+		SetView<Course> difference = Sets.difference(available, followed);
+		return difference;
+	}
 
 	public Set<Lecture> getCourseLectures(String code) {
 		Integer id = Integer.parseInt(code);
 		return lectureDAO.findByCourseCode(id);
+	}
+	
+	public Set<Lecture> getCourseLecturesTerminate(String code) {
+		Integer id = Integer.parseInt(code);
+		return lectureDAO.findByCourseAndTerminate(id);
 	}
 
 	public Lecture createLecture(LectureDTO lectureDTO) {
@@ -59,6 +83,10 @@ public class CourseService {
 		lecture = lectureDAO.findById(id).get();
 
 		return lecture;
+	}
+	
+	public void closeLecture(Integer lectureId) {
+		lectureDAO.updateLectureEnd(lectureId);
 	}
 
 }

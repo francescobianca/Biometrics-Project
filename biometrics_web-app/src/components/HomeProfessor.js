@@ -151,6 +151,9 @@ export default function Dashboard({history}) {
       arr.push(coursesJSON[key]);
     });
 
+    var professorName = Cookies.get("firstNameProfessor");
+    var professorSurname = Cookies.get("lastNameProfessor");
+
     //console.log(arr);
 
     const classes = useStyles();
@@ -164,11 +167,26 @@ export default function Dashboard({history}) {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const openCoursePage = (course, code) => {
+
+      Cookies.set("selectedCourse", course);
+
+        console.log(Cookies.get("selectedCourse"))
+
+        if (Cookies.get("selectedCourse") != null) {
+          Cookies.remove("selectedCourse");
+        } 
         Cookies.set("selectedCourse", course);
+
+        console.log(code);
+
         BaseInstance.get("getCourseLectures", { params: { "code": code } }).then(res => {
+          if (Cookies.get("courseLectures") != null) {
+            Cookies.remove("courseLectures");
+          }
           Cookies.set("courseLectures",res.data)
         })
         history.push('/professorCoursePage');
+        window.location.reload();
     }
 
   return (
@@ -186,7 +204,7 @@ export default function Dashboard({history}) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Home Page Professore
+            Home Page: {professorName} {professorSurname}
           </Typography>
           
         </Toolbar>

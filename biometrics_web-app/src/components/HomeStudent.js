@@ -150,6 +150,8 @@ export default function Dashboard({history}) {
 
     console.log(arrFollowingCourses);
 
+    var studentName = Cookies.get("firstNameStudent");
+    var studentSurname = Cookies.get("lastNameStudent")
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -176,7 +178,7 @@ export default function Dashboard({history}) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Home Page Studenti
+            Home Page: {studentName} {studentSurname}
           </Typography>
           
         </Toolbar>
