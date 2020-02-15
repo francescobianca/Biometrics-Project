@@ -58,12 +58,14 @@ public class CourseService {
 		return difference;
 	}
 	
-	public void subscribe(Integer courseId, String matricola) {
+	public Set<Course> subscribe(Integer courseId, String matricola) {
 		Student s = studentDAO.findById(matricola).get();
 		Course c = courseDAO.findById(courseId).get();
 		
 		s.getFollowingCourses().add(c);
 		studentDAO.save(s);
+		
+		return s.getFollowingCourses();
 	}
 
 	public Set<Lecture> getCourseLectures(String code) {
@@ -93,8 +95,10 @@ public class CourseService {
 		return lecture;
 	}
 	
-	public void closeLecture(Integer lectureId) {
+	public Set<Lecture> closeLecture(Integer lectureId, String courseCode) {
 		lectureDAO.updateLectureEnd(lectureId);
+		Integer id = Integer.parseInt(courseCode);
+		return lectureDAO.findByCourseAndTerminate(id);
 	}
 
 }

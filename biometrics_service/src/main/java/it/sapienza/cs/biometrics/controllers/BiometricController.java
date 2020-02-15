@@ -68,8 +68,8 @@ public class BiometricController {
 	}
 	
 	@GetMapping("/subscribeCourse")
-	public void subscribeCourse(@RequestParam Integer courseId, @RequestParam String matricola) {
-		courseService.subscribe(courseId, matricola);
+	public Set<Course> subscribeCourse(@RequestParam Integer courseId, @RequestParam String matricola) {
+		return courseService.subscribe(courseId, matricola);
 	}
 
 	@PostMapping("/createLecture")
@@ -78,8 +78,11 @@ public class BiometricController {
 	}
 	
 	@GetMapping("/closeLecture")
-	public void closeLecture(@RequestParam Integer lectureId) {
-		courseService.closeLecture(lectureId);
+	public Set<Lecture> closeLecture(@RequestParam Integer lectureId, @RequestParam String courseCode) {
+		
+		// Qua va inserito il codice per comunicare con arduino e prendere le presenze del fingerprint
+		
+		return courseService.closeLecture(lectureId, courseCode);
 	}
 
 	@GetMapping("/getSheet")

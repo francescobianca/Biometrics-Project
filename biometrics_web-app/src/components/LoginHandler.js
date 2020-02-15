@@ -69,7 +69,7 @@ export default function LoginHandler ({history}) {
 
         BaseInstance.get("getAvailableCourse", { params: { "matricola": data.matricola } }).then(res => {
             console.log(res.data)
-            Cookies.set("availableCourse", res.data)
+            Cookies.set("availableCourse", res.data);
         })
         //var subscribedCourses = data.followingCourses;
         //subscribedCourses.sort((a, b) => (a.subject > b.subject) ? 1 : -1)

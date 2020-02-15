@@ -226,6 +226,9 @@ export default function FullWidthGrid({history}) {
         BaseInstance.post("createLecture", {course: courseCode, description: description, date: selectedDate}).then(res =>{
             console.log(res);
             Cookies.set("todayLesson", res.data);
+            //console.log(Cookies.get("todayLesson"))
+            var x = Cookies.get("todayLesson");
+            console.log(x)
         })
         handleClose()
         window.location.reload();
@@ -237,13 +240,19 @@ export default function FullWidthGrid({history}) {
     // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
     const closeLesson = (lectureId) => {
         console.log(lectureId);
-        BaseInstance.get("closeLecture", { params: { "lectureId": lectureId } }).then(res => {
+        BaseInstance.get("closeLecture", { params: { "lectureId": lectureId, "courseCode" : selectedCourseJSON.code } }).then(res => {
             Cookies.remove("todayLesson");
+            Cookies.set("courseLectures",res.data)
+            console.log(res.data)
             //Cookies.remove("selectedCourse");
             //Cookies.remove("courseLectures");
-            history.push("/homeProfessor");         
+            //history.push("/homeProfessor");    
+            window.location.reload();     
         })
+        //window.location.reload();
     }
+
+    //console.log(courseLectures)
 
     // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
 

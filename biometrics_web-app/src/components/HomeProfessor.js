@@ -166,23 +166,27 @@ export default function Dashboard({history}) {
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+    if (Cookies.get("courseLectures") != undefined)
+      Cookies.remove("courseLectures");
+
+    if (Cookies.get("selectedCourse") != undefined) {
+        Cookies.remove("selectedCourse");
+    } 
+
     const openCoursePage = (course, code) => {
 
       Cookies.set("selectedCourse", course);
 
         console.log(Cookies.get("selectedCourse"))
-
-        if (Cookies.get("selectedCourse") != null) {
-          Cookies.remove("selectedCourse");
-        } 
+        
         Cookies.set("selectedCourse", course);
 
         console.log(code);
 
         BaseInstance.get("getCourseLectures", { params: { "code": code } }).then(res => {
-          if (Cookies.get("courseLectures") != null) {
+          /*if (Cookies.get("courseLectures") != null) {
             Cookies.remove("courseLectures");
-          }
+          }*/
           Cookies.set("courseLectures",res.data)
         })
         history.push('/professorCoursePage');

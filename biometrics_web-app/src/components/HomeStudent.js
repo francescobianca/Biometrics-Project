@@ -144,6 +144,7 @@ export default function Dashboard({history}) {
         imagePath = require('../resources/default.png');
 
     var followingCourses = Cookies.get("followingCourses");
+    console.log(followingCourses)
     var followingCoursesJSON =  JSON.parse(followingCourses);
     var arrFollowingCourses = [];
     Object.keys(followingCoursesJSON).forEach(function(key) {
@@ -162,29 +163,31 @@ export default function Dashboard({history}) {
       arrAvailableCourses.push(availableCourseJSON[key]);
     });
 
-    console.log(arrAvailableCourses);
+    //console.log(arrAvailableCourses);
 
     var studentName = Cookies.get("firstNameStudent");
     var studentSurname = Cookies.get("lastNameStudent")
     var studentMatricola = Cookies.get("matricolaStudent");
 
     const subscribe = (courseId,courseItem) => {
-      console.log(courseId)
+      //console.log(courseId)
       BaseInstance.get("subscribeCourse", { params: { "courseId": courseId, "matricola" : studentMatricola} }).then(res => {
           console.log(res.data)
-      })
-      /*console.log("prima");
-      console.log(arrFollowingCourses.length);
-      arrFollowingCourses.push(courseItem);
-      console.log("dopo");
-      console.log(arrFollowingCourses.length);
+          Cookies.set("followingCourses",res.data);
 
-      console.log("prima");
-      console.log(arrAvailableCourses.length)
-      console.log("dopo");
-      arrAvailableCourses.pop(courseItem)
-      console.log(arrAvailableCourses.length)*/
-      //window.location.reload();
+          BaseInstance.get("getAvailableCourse", { params: { "matricola": studentMatricola } }).then(res => {
+            console.log(res.data)
+            Cookies.set("availableCourse", res.data);
+            window.location.reload();
+          })
+
+          //window.location.reload();
+      })
+
+      /*
+
+      window.location.reload();*/
+      
     }
 
   const classes = useStyles();
