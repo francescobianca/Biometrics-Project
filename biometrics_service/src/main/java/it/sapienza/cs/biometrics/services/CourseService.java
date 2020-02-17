@@ -1,6 +1,7 @@
 package it.sapienza.cs.biometrics.services;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,10 @@ public class CourseService {
 	public Set<Lecture> getCourseLecturesTerminate(String code) {
 		Integer id = Integer.parseInt(code);
 		return lectureDAO.findByCourseAndTerminate(id);
+	}
+	
+	public Lecture findLectureById(Integer id) {
+		return lectureDAO.findById(id).orElse(new Lecture());
 	}
 
 	public Lecture createLecture(LectureDTO lectureDTO) {

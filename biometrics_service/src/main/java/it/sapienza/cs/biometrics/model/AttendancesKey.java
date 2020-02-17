@@ -18,6 +18,15 @@ public class AttendancesKey implements Serializable{
 	@Column(name = "lecture_id")
 	private Integer lecture_lectureId;
 	
+	public AttendancesKey() {
+	
+	}
+	
+	public AttendancesKey(String student_matricola, Integer lecture_lectureId) {
+		this.student_matricola = student_matricola;
+		this.lecture_lectureId = lecture_lectureId;
+	}
+	
 	public String getStudent_matricola() {
 		return student_matricola;
 	}

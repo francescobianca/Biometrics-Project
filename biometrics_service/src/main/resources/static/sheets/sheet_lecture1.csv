@@ -1,0 +1,4 @@
+lecture_id,student_id,face_recognition_attendanes,face_recognition_accuracy,fingerprint_attendances,fingerprint_confidance
+1,matricolaStudente1,true,0.0,true,0.0
+1,matricolaStudente2,false,0.0,true,0.0
+1,matricolaStudente4,true,0.0,false,0.0

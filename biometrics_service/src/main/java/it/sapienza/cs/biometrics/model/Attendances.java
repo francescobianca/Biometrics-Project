@@ -1,5 +1,7 @@
 package it.sapienza.cs.biometrics.model;
 
+import java.util.Optional;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -54,8 +56,8 @@ public class Attendances {
 		return lecture;
 	}
 
-	public void setLecture(Lecture lecture) {
-		this.lecture = lecture;
+	public void setLecture(Lecture l) {
+		this.lecture = l;
 	}
 
 	public boolean isFace_recognition_attendances() {

@@ -166,6 +166,7 @@ export default function FullWidthGrid({history}) {
     var courseLecturesArr = [];
    
     var courseLecturesJSON = JSON.parse(courseLectures);
+    
     Object.keys(courseLecturesJSON).forEach(function(key) {
         courseLecturesArr.push(courseLecturesJSON[key]);
     });
@@ -224,11 +225,11 @@ export default function FullWidthGrid({history}) {
         console.log(selectedDate);
 
         BaseInstance.post("createLecture", {course: courseCode, description: description, date: selectedDate}).then(res =>{
-            console.log(res);
+            console.log(res.data);
             Cookies.set("todayLesson", res.data);
             //console.log(Cookies.get("todayLesson"))
-            var x = Cookies.get("todayLesson");
-            console.log(x)
+            //var x = Cookies.get("todayLesson");
+            //console.log(x)
         })
         handleClose()
         window.location.reload();

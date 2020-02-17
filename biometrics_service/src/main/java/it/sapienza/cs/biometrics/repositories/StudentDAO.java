@@ -10,5 +10,7 @@ import it.sapienza.cs.biometrics.model.Student;
 
 @Repository
 public interface StudentDAO extends CrudRepository<Student, String> {
+	
+	Student findByFingerPrint (String fingerprint);
 
 }
