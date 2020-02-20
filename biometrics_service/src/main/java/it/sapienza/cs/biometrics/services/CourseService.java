@@ -93,9 +93,9 @@ public class CourseService {
 
 		lectureDAO.save(lecture);
 
-		int id = lecture.getLectureId();
+		//int id = lecture.getLectureId();
 
-		lecture = lectureDAO.findById(id).get();
+		//lecture = lectureDAO.findById(id).get();
 
 		return lecture;
 	}

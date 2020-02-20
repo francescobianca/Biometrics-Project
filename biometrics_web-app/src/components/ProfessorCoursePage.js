@@ -164,12 +164,14 @@ export default function FullWidthGrid({history}) {
 
     var courseLectures = Cookies.get("courseLectures");
     var courseLecturesArr = [];
+
+    console.log(courseLectures)
    
     var courseLecturesJSON = JSON.parse(courseLectures);
     
     Object.keys(courseLecturesJSON).forEach(function(key) {
         courseLecturesArr.push(courseLecturesJSON[key]);
-    });
+    })
     
 
     const classes = useStyles();
@@ -230,10 +232,12 @@ export default function FullWidthGrid({history}) {
             //console.log(Cookies.get("todayLesson"))
             //var x = Cookies.get("todayLesson");
             //console.log(x)
+
+            window.location.reload();
         })
         handleClose()
-        window.location.reload();
     };
+
 
     var todayLesson = Cookies.get("todayLesson");
     console.log(todayLesson);
@@ -257,7 +261,7 @@ export default function FullWidthGrid({history}) {
 
     // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
 
-    if (todayLesson != null) 
+    if (todayLesson != undefined) 
         return (
         <div className={classes.root}>
         <CssBaseline />
@@ -300,7 +304,6 @@ export default function FullWidthGrid({history}) {
             <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
                 
-                {/* Profile Picture */}
                 <Grid item xs={12} md={4} lg={3}>
                 <React.Fragment>
                     <div style={{"margin-bottom" : "-40px"}}>
@@ -316,14 +319,12 @@ export default function FullWidthGrid({history}) {
                 </React.Fragment>
                 </Grid>
 
-                {/* Professor Course */}
                 <Grid item xs={12}>
                 <Paper className={classes.paper}>
                 <Title>You have selected the course : {selectedCourseJSON.code} - {selectedCourseJSON.name}</Title>
                 </Paper>            
                 </Grid>
 
-                {/* Professor Course */}
                 <Grid item xs={12}>
                 <Paper className={classes.paper}>
                 <div style={{ display:"inline-block", float:"right", paddingLeft:"42%" }}>
@@ -378,7 +379,7 @@ export default function FullWidthGrid({history}) {
                 <Paper className={classes.paper}>
                 <Title>Current Lesson:</Title>
                     
-                        <ListItem className={classes.courseItem} item xs={12}>
+                         <ListItem className={classes.courseItem} item xs={12}>
                             <ListItem button>
                                 <ListItemText > {JSON.parse(todayLesson).date}</ListItemText>
                             </ListItem>
@@ -388,12 +389,28 @@ export default function FullWidthGrid({history}) {
                             <Tooltip title="Close the attendance registration for this lesson" >
                                 <IconButton onClick={() => { closeLesson(JSON.parse(todayLesson).lectureId)}}> <AssignmentTurnedInIcon /> </IconButton>
                             </Tooltip>  
-                        </ListItem>
-                                
+                        </ListItem>                       
                 </Paper>            
                 </Grid>
 
-                {/* Professor Course */}
+                <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                <Title>Face recognition:</Title>
+                    
+                         <ListItem className={classes.courseItem} item xs={16}>
+                            <ListItem button>
+                                <ListItemText >ciao</ListItemText>
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemText >Ciao</ListItemText>
+                            </ListItem>
+                            <Tooltip title="Close the attendance registration for this lesson" >
+                                <IconButton onClick={() => { closeLesson(JSON.parse(todayLesson).lectureId)}}> <AssignmentTurnedInIcon /> </IconButton>
+                            </Tooltip>  
+                        </ListItem>    
+                </Paper>            
+                </Grid>
+
                 <Grid item xs={12}>
                 <Paper className={classes.paper}>
                 <Title>List of past lessons:</Title>
@@ -469,7 +486,6 @@ export default function FullWidthGrid({history}) {
             <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
                 
-                {/* Profile Picture */}
                 <Grid item xs={12} md={4} lg={3}>
                 <React.Fragment>
                     <div style={{"margin-bottom" : "-40px"}}>
@@ -485,14 +501,12 @@ export default function FullWidthGrid({history}) {
                 </React.Fragment>
                 </Grid>
 
-                {/* Professor Course */}
                 <Grid item xs={12}>
                 <Paper className={classes.paper}>
                 <Title>You have selected the course : {selectedCourseJSON.code} - {selectedCourseJSON.name}</Title>
                 </Paper>            
                 </Grid>
 
-                {/* Professor Course */}
                 <Grid item xs={12}>
                 <Paper className={classes.paper}>
                 <div style={{ display:"inline-block", float:"right", paddingLeft:"42%" }}>

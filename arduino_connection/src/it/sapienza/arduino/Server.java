@@ -15,9 +15,9 @@ public class Server extends Thread {
 
 	public Server() throws Exception {
 		Server = new ServerSocket(4000);
-		System.out.println("Il Server è in attesa sulla porta 4000.");
+		System.out.println("Il Server ï¿½ in attesa sulla porta 4000.");
 
-		sensor = new Controller("COM8"); // arduino port
+		sensor = new Controller("/dev/ttyACM0"); // arduino port
 	}
 
 	public void run() {

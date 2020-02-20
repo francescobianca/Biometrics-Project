@@ -179,7 +179,7 @@ export default function Dashboard({history}) {
 
         console.log(Cookies.get("selectedCourse"))
         
-        Cookies.set("selectedCourse", course);
+        //Cookies.set("selectedCourse", course);
 
         console.log(code);
 
@@ -187,10 +187,14 @@ export default function Dashboard({history}) {
           /*if (Cookies.get("courseLectures") != null) {
             Cookies.remove("courseLectures");
           }*/
+          //console.log(res.data)
+
           Cookies.set("courseLectures",res.data)
+          console.log(res.data)
+          history.push('/professorCoursePage');
+          window.location.reload();
         })
-        history.push('/professorCoursePage');
-        window.location.reload();
+        
     }
 
   return (
