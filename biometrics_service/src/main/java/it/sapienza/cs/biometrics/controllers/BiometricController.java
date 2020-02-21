@@ -88,6 +88,12 @@ public class BiometricController {
 
 	@PostMapping("/createLecture")
 	public Lecture createLecture(@RequestBody LectureDTO lectureDTO) {
+		return courseService.createLecture(lectureDTO);
+	}
+
+	@GetMapping("/startFingerprintRecognition")
+	public void startFingerprintRecognition() {
+		System.out.println("Start fingerprint recognition");
 
 		// Inizio omunicazione con arduino
 		BufferedReader in = null;
@@ -95,9 +101,9 @@ public class BiometricController {
 		Socket socket = null;
 
 		try {
-			
+
 			System.out.println("OK sto provando ad effettuare una comunicazione");
-			
+
 			socket = new Socket("127.0.0.1", 4000);
 
 			// Apre i canali di I/O
@@ -115,11 +121,11 @@ public class BiometricController {
 			e.printStackTrace();
 		}
 
-		return courseService.createLecture(lectureDTO);
 	}
 
-	@GetMapping("/closeLecture")
-	public Set<Lecture> closeLecture(@RequestParam Integer lectureId, @RequestParam String courseCode) {
+	@GetMapping("/endFingerprintRecognition")
+	public void startFingerprintRecognition(@RequestParam Integer lectureId, @RequestParam String courseCode) {
+		System.out.println("End fingerprint recognition");
 
 		// Qua va inserito il codice per comunicare con arduino e prendere le presenze
 		BufferedReader in = null;
@@ -133,92 +139,91 @@ public class BiometricController {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintStream(socket.getOutputStream(), true);
 
-			//String s = in.readLine();
-			
+			// String s = in.readLine();
+
 			out.println("Presenze");
 			out.flush();
-			
+
 			String attendences = in.readLine();
 			attendences = method(attendences);
-			System.out.println("Attendences: "+attendences);
-			
+			System.out.println("Attendences: " + attendences);
+
 			HashMap<String, String> fingerprint = new HashMap<>();
-			
-			String[] split = attendences.split(";");			
-			  
-	        for (String a : split) {
-	            System.out.println(a);
-	            String[] secondSplit = a.split(":");
-	            
-            	String value = fingerprint.get(secondSplit[0]);
-	            if (value != null) {
-	            	int valueInt = Integer.valueOf(value);
-	            	if (Integer.valueOf(secondSplit[1]) > valueInt) {
-	            		// Il nuovo valore è maggiore
-	            		String newValue = secondSplit[1];
-	            		fingerprint.put(secondSplit[0], newValue);
-	            	}
-	            } else
-	            	fingerprint.put(secondSplit[0], secondSplit[1]);
-	        }
-	        
-	        for (Entry<String, String> entry : fingerprint.entrySet()) {
-	            String key = entry.getKey();
-	            String value = entry.getValue();
-	            System.out.println("ID: "+key+" Value: "+value);
-	            
-	            // Inserimento nel db: prima mi prendo l'user collegato a quell'id.
-	            Student s = studentService.findByFingerprint(key);
-	            //System.out.println(s.getLastName());
-	            // Vedo se sono iscritto al corso 
-	            Set<Course> followedCourse = s.getFollowingCourses();
-	            boolean seguoCorso = false;
-	            for (Course c : followedCourse) {
-	            	if (c.getCode() ==  Integer.parseInt(courseCode)) {
-	            		// Vuol dire che il seguente studente segue il corso.
-	            		seguoCorso=true;
-	            		break;
-	            	}
-	            }
-	            if (!seguoCorso) 
-	            	fingerprint.remove(key);
-	            
-	        }
-	        
-	        //Entry rimaste --> Sono gli studenti iscritti al corso. Le impronte fasulle sono eliminate.
-	        for (Entry<String, String> entry : fingerprint.entrySet()) {
-	            String key = entry.getKey();
-	            String value = entry.getValue();
-	            System.out.println("ID_2: "+key+" Value_2: "+value);
-	            
-	            // A questo punto devo andare a mettere le presenze. Ho lectureId
-	            Student s = studentService.findByFingerprint(key);
-	            AttendancesKey attendancesKey = new AttendancesKey(s.getMatricola(),lectureId);
-	            //attendancesKey.setLecture_lectureId(lectureId);
-	            //attendancesKey.setStudent_matricola(s.getMatricola());
-	            Optional<Attendances> a = attendanceService.findById(attendancesKey);
-	            if (!a.isPresent()) {
-	            	// Qua ancora non è stata presa alcuna presenze 
-	            	Attendances newAttendences = new Attendances();
-	            	// Ho solo i dati relativi al fingerprint
-	            	newAttendences.setId(new AttendancesKey(s.getMatricola(), lectureId));
-	            	newAttendences.setStudent(s);
-	            	Lecture l = courseService.findLectureById(lectureId);
-	            	newAttendences.setLecture(l);
-	            	newAttendences.setFingerprint_attendances(true);
-	            	newAttendences.setFingerprint_confidance(Float.valueOf(value));
-	            	attendanceService.createAttendences(newAttendences);
-	            }
-	            else {
-	            	// Qua c'è già un'istanza della presenza
-	            	a.get().setFingerprint_attendances(true);
-	            	a.get().setFingerprint_confidance(Float.valueOf(value));
-	            	attendanceService.createAttendences(a.get());
-	            }
-	            
-	        }
-	        
-			
+
+			String[] split = attendences.split(";");
+
+			for (String a : split) {
+				System.out.println(a);
+				String[] secondSplit = a.split(":");
+
+				String value = fingerprint.get(secondSplit[0]);
+				if (value != null) {
+					int valueInt = Integer.valueOf(value);
+					if (Integer.valueOf(secondSplit[1]) > valueInt) {
+						// Il nuovo valore è maggiore
+						String newValue = secondSplit[1];
+						fingerprint.put(secondSplit[0], newValue);
+					}
+				} else
+					fingerprint.put(secondSplit[0], secondSplit[1]);
+			}
+
+			for (Entry<String, String> entry : fingerprint.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				System.out.println("ID: " + key + " Value: " + value);
+
+				// Inserimento nel db: prima mi prendo l'user collegato a quell'id.
+				Student s = studentService.findByFingerprint(key);
+				// System.out.println(s.getLastName());
+				// Vedo se sono iscritto al corso
+				Set<Course> followedCourse = s.getFollowingCourses();
+				boolean seguoCorso = false;
+				for (Course c : followedCourse) {
+					if (c.getCode() == Integer.parseInt(courseCode)) {
+						// Vuol dire che il seguente studente segue il corso.
+						seguoCorso = true;
+						break;
+					}
+				}
+				if (!seguoCorso)
+					fingerprint.remove(key);
+
+			}
+
+			// Entry rimaste --> Sono gli studenti iscritti al corso. Le impronte fasulle
+			// sono eliminate.
+			for (Entry<String, String> entry : fingerprint.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				System.out.println("ID_2: " + key + " Value_2: " + value);
+
+				// A questo punto devo andare a mettere le presenze. Ho lectureId
+				Student s = studentService.findByFingerprint(key);
+				AttendancesKey attendancesKey = new AttendancesKey(s.getMatricola(), lectureId);
+				// attendancesKey.setLecture_lectureId(lectureId);
+				// attendancesKey.setStudent_matricola(s.getMatricola());
+				Optional<Attendances> a = attendanceService.findById(attendancesKey);
+				if (!a.isPresent()) {
+					// Qua ancora non è stata presa alcuna presenze
+					Attendances newAttendences = new Attendances();
+					// Ho solo i dati relativi al fingerprint
+					newAttendences.setId(new AttendancesKey(s.getMatricola(), lectureId));
+					newAttendences.setStudent(s);
+					Lecture l = courseService.findLectureById(lectureId);
+					newAttendences.setLecture(l);
+					newAttendences.setFingerprint_attendances(true);
+					newAttendences.setFingerprint_confidance(Float.valueOf(value));
+					attendanceService.createAttendences(newAttendences);
+				} else {
+					// Qua c'è già un'istanza della presenza
+					a.get().setFingerprint_attendances(true);
+					a.get().setFingerprint_confidance(Float.valueOf(value));
+					attendanceService.createAttendences(a.get());
+				}
+
+			}
+
 			out.close();
 			in.close();
 
@@ -227,14 +232,18 @@ public class BiometricController {
 			e.printStackTrace();
 		}
 
+	}
+
+	@GetMapping("/closeLecture")
+	public Set<Lecture> closeLecture(@RequestParam Integer lectureId, @RequestParam String courseCode) {
 		return courseService.closeLecture(lectureId, courseCode);
 	}
-	
+
 	public String method(String str) {
-	    if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == ';') {
-	        str = str.substring(0, str.length() - 1);
-	    }
-	    return str;
+		if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == ';') {
+			str = str.substring(0, str.length() - 1);
+		}
+		return str;
 	}
 
 	@GetMapping("/getSheet")

@@ -10,6 +10,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Card from '@material-ui/core/Card';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -43,6 +44,8 @@ import Cookies from 'js-cookie'
 import { createBrowserHistory } from "history";
 import Title from './Title';
 import BaseInstance from '../http-client/BaseInstance'
+import faceAPI from '../http-client/API_Face'
+import API_Face from '../http-client/API_Face';
 
 function Copyright() {
   return (
@@ -134,6 +137,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+  },
+  paperNewLecture: {
+    height: 200,
+    width: 394,
   },
   fixedHeight: {
     height: 240,
@@ -243,7 +250,39 @@ export default function FullWidthGrid({history}) {
     console.log(todayLesson);
 
     // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
-    const closeLesson = (lectureId) => {
+
+    // Funzioni per la gestione delle presenze
+    const startFaceRecognition = (lectureId) => {
+        console.log("StartFaceRecognition")
+
+        // Devo chiamare l'api di OpenCV
+        API_Face.get("evaluation").then(res => {
+            console.log(res.data)
+        })
+
+
+    }
+
+    const endFaceRecognition = (lectureId) => {
+        console.log("EndFaceRecognition")
+    }
+
+    const startFingerprintRecognition = (lectureId) => {
+        console.log("StartFingerRecognition")
+        BaseInstance.get("startFingerprintRecognition").then(res => {
+            console.log(res)
+        })
+    }
+
+    const endFingerprintRecognition = (lectureId) => {
+        console.log("EndFingerRecognition")
+        BaseInstance.get("endFingerprintRecognition", { params: { "lectureId": lectureId, "courseCode" : selectedCourseJSON.code } }).then(res => {
+            console.log(res)
+        })
+    }
+
+    // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
+    const closeLecture = (lectureId) => {
         console.log(lectureId);
         BaseInstance.get("closeLecture", { params: { "lectureId": lectureId, "courseCode" : selectedCourseJSON.code } }).then(res => {
             Cookies.remove("todayLesson");
@@ -256,10 +295,6 @@ export default function FullWidthGrid({history}) {
         })
         //window.location.reload();
     }
-
-    //console.log(courseLectures)
-
-    // Quando clicco termina faccio l'update su today lesson, la levo dai cookie e la metto sotto nelle lezioni finite aggiornando la pagina.
 
     if (todayLesson != undefined) 
         return (
@@ -386,29 +421,51 @@ export default function FullWidthGrid({history}) {
                             <ListItem button>
                                 <ListItemText > {JSON.parse(todayLesson).description}</ListItemText>
                             </ListItem>
-                            <Tooltip title="Close the attendance registration for this lesson" >
-                                <IconButton onClick={() => { closeLesson(JSON.parse(todayLesson).lectureId)}}> <AssignmentTurnedInIcon /> </IconButton>
-                            </Tooltip>  
                         </ListItem>                       
                 </Paper>            
                 </Grid>
 
-                <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                <Title>Face recognition:</Title>
-                    
-                         <ListItem className={classes.courseItem} item xs={16}>
-                            <ListItem button>
-                                <ListItemText >ciao</ListItemText>
-                            </ListItem>
-                            <ListItem button>
-                                <ListItemText >Ciao</ListItemText>
-                            </ListItem>
-                            <Tooltip title="Close the attendance registration for this lesson" >
-                                <IconButton onClick={() => { closeLesson(JSON.parse(todayLesson).lectureId)}}> <AssignmentTurnedInIcon /> </IconButton>
-                            </Tooltip>  
-                        </ListItem>    
-                </Paper>            
+                <Grid container className={classes.root} spacing={2}>
+                    <Grid item xs={12}>
+                        <Grid container justify="center" spacing={2}>
+                            <Grid item>
+                                <Paper className={classes.paperNewLecture}>
+                                <Title>Face Recognition</Title>
+                                    
+                                    <Fab color="primary" variant="extended" onClick={() => { startFaceRecognition(JSON.parse(todayLesson).lectureId)}}>
+                                        Start Face Recognition
+                                    </Fab>
+
+                                    <Fab color="primary" variant="extended" onClick={() => { endFaceRecognition(JSON.parse(todayLesson).lectureId)}}>
+                                        End Face Recognition
+                                    </Fab>
+
+                                </Paper>
+                            </Grid>
+                            <Grid item>
+                                <Paper className={classes.paperNewLecture}>
+                                <Title>Fingerprint Recognition</Title>
+
+                                    <Fab color="primary" variant="extended" onClick={() => { startFingerprintRecognition(JSON.parse(todayLesson).lectureId)}}>
+                                        Start Fingerprint Recognition
+                                    </Fab>
+
+                                    <Fab color="primary" variant="extended" onClick={() => { endFingerprintRecognition(JSON.parse(todayLesson).lectureId)}}>
+                                        End Fingerprint Recognition
+                                    </Fab>
+
+                                </Paper>
+                            </Grid>
+                            <Grid item>
+                                <Paper className={classes.paperNewLecture}>
+                                <Title>Close Lecture</Title>
+                                    <Fab color="primary" variant="extended" onClick={() => { closeLecture(JSON.parse(todayLesson).lectureId)}}>
+                                        Close Lecture
+                                    </Fab>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
                 <Grid item xs={12}>
