@@ -1,0 +1,4 @@
+TO DO BIOMETRICS PROJECT
+
+1) Interfaccia completata --> resta da fare una prova con il fingerprint e il face recognition insieme. Cosa succede 
+   se mando un array di fingerprint vuoto? Bisogna controllare questa cosa. 

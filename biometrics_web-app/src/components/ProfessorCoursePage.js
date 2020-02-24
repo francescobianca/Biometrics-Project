@@ -257,14 +257,20 @@ export default function FullWidthGrid({history}) {
 
         // Devo chiamare l'api di OpenCV
         API_Face.get("evaluation").then(res => {
-            console.log(res.data)
+            console.log("Output Face Recognition")
+        
+            var outputFaceRecognition = res.data[1];
+            console.log(outputFaceRecognition)
+
+            // Ora in outputFaceRecognition ho le presenze prese tramite il face recognition
+            
+            BaseInstance.get("faceRecognitionOutput", { params: { "attendences": outputFaceRecognition, "lectureId": lectureId, "courseCode" : selectedCourseJSON.code} }).then(res => {
+                console.log(res)
+            })
+
         })
 
 
-    }
-
-    const endFaceRecognition = (lectureId) => {
-        console.log("EndFaceRecognition")
     }
 
     const startFingerprintRecognition = (lectureId) => {
@@ -300,40 +306,16 @@ export default function FullWidthGrid({history}) {
         return (
         <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+        <AppBar position="absolute" className={clsx(classes.appBar)}>
             <Toolbar className={classes.toolbar}>
-            <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-            >
-                <MenuIcon />
-            </IconButton>
+            
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                 Course management
             </Typography>
             
             </Toolbar>
         </AppBar>
-        <Drawer
-            variant="permanent"
-            classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-            }}
-            open={open}
-        >
-            <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-            </IconButton>
-            </div>
-            <Divider />
-            <List>{mainListItems}</List>
-            <Divider />
-            <List>{secondaryListItems}</List>
-        </Drawer>
+       
         <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
@@ -430,38 +412,43 @@ export default function FullWidthGrid({history}) {
                         <Grid container justify="center" spacing={2}>
                             <Grid item>
                                 <Paper className={classes.paperNewLecture}>
+                                <div style={{ paddingLeft:"28%"}}>
                                 <Title>Face Recognition</Title>
-                                    
+                                </div>
+                                    <div style={{ paddingLeft:"25%", paddingTop:"10%" }}>
                                     <Fab color="primary" variant="extended" onClick={() => { startFaceRecognition(JSON.parse(todayLesson).lectureId)}}>
-                                        Start Face Recognition
+                                        Face Recognition
                                     </Fab>
-
-                                    <Fab color="primary" variant="extended" onClick={() => { endFaceRecognition(JSON.parse(todayLesson).lectureId)}}>
-                                        End Face Recognition
-                                    </Fab>
-
+                                    </div>
                                 </Paper>
                             </Grid>
                             <Grid item>
                                 <Paper className={classes.paperNewLecture}>
+                                <div style={{ paddingLeft:"25%"}}>
                                 <Title>Fingerprint Recognition</Title>
-
+                                </div>
+                                    <div style={{ paddingLeft:"13%", paddingTop:"5%" }}>
                                     <Fab color="primary" variant="extended" onClick={() => { startFingerprintRecognition(JSON.parse(todayLesson).lectureId)}}>
                                         Start Fingerprint Recognition
                                     </Fab>
-
+                                    </div>
+                                    <div style={{ paddingLeft:"15%", paddingTop:"5%" }}>
                                     <Fab color="primary" variant="extended" onClick={() => { endFingerprintRecognition(JSON.parse(todayLesson).lectureId)}}>
                                         End Fingerprint Recognition
                                     </Fab>
-
+                                    </div>
                                 </Paper>
                             </Grid>
                             <Grid item>
                                 <Paper className={classes.paperNewLecture}>
+                                <div style={{ paddingLeft:"30%"}}>
                                 <Title>Close Lecture</Title>
+                                </div>
+                                <div style={{ paddingLeft:"28%", paddingTop:"10%" }}>
                                     <Fab color="primary" variant="extended" onClick={() => { closeLecture(JSON.parse(todayLesson).lectureId)}}>
                                         Close Lecture
                                     </Fab>
+                                    </div>
                                 </Paper>
                             </Grid>
                         </Grid>
@@ -504,40 +491,16 @@ export default function FullWidthGrid({history}) {
     return (
     <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+        <AppBar position="absolute" className={clsx(classes.appBar)}>
             <Toolbar className={classes.toolbar}>
-            <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-            >
-                <MenuIcon />
-            </IconButton>
+           
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                 Course management
             </Typography>
             
             </Toolbar>
         </AppBar>
-        <Drawer
-            variant="permanent"
-            classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-            }}
-            open={open}
-        >
-            <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-            </IconButton>
-            </div>
-            <Divider />
-            <List>{mainListItems}</List>
-            <Divider />
-            <List>{secondaryListItems}</List>
-        </Drawer>
+      
         <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>

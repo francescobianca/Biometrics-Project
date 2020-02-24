@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sun.tools.sjavac.server.SysInfo;
+
 import it.sapienza.cs.biometrics.services.AttendanceService;
 import it.sapienza.cs.biometrics.services.CourseService;
 import it.sapienza.cs.biometrics.services.LoginService;
@@ -91,11 +93,90 @@ public class BiometricController {
 		return courseService.createLecture(lectureDTO);
 	}
 
+	@GetMapping("/faceRecognitionOutput")
+	public void faceRecognitionOutput(@RequestParam String attendences, @RequestParam Integer lectureId,
+			@RequestParam String courseCode) {
+		System.out.println(attendences);
+
+		String parsedAttendences = attendences.substring(1, attendences.length() - 1);
+		System.out.println(parsedAttendences);
+
+		// Creo una struttura per rimuovere i duplicati
+		HashMap<String, Float> face_recognition = new HashMap<>();
+
+		// Bisogna fare lo split sulle virgole
+		String[] split = parsedAttendences.split(",");
+
+		// Adesso su string split ho linee di questo tipo: "1473573":0.49357890956714756
+		for (String splitted : split) {
+
+			// Devo fare nuovamente split sui ':'
+			String[] student_row = splitted.split(":");
+			// Adesso ho student_row[0] = "1473573" e student_row[1] = 0.49357890956714756
+
+			String matricola = student_row[0].substring(1, student_row[0].length() - 1);
+			float accuracy = Float.parseFloat(student_row[1]);
+
+
+			face_recognition.put(matricola, accuracy);
+		}
+
+		// Ora che ho matricola e accuracy bisogna salvarle nel db:
+		/*
+		 * Optional<Student> s = studentService.findById(matricola); if (s.isPresent())
+		 * { // Se s è uno studente vero procedo a salvare i dati altrimenti se non
+		 * esiste // non faccio nulla
+		 * 
+		 * }
+		 */
+		System.out.println("Size di Face"+face_recognition.size());
+		
+		
+		for (Entry<String, Float> entry : face_recognition.entrySet()) {
+			String key = entry.getKey();
+			Float value = entry.getValue();
+			System.out.println("ID: " + key + " Value: " + value);
+
+			Optional<Student> s = studentService.findById(key);
+			if (s.isPresent()) {
+				
+				System.out.println("HO TROVATO MATCH CON QUESTA CHIAVE: "+key);
+				System.out.println(s.get().getMatricola());
+				
+				/*
+				 * Se esiste lo studente procedo altrimenti non faccio nulla. Non servono
+				 * controlli su attendences in quanto face_recognition è il primo controllo
+				 */
+				Student exists = s.get();
+
+				// Va fatto il controllo sul corso
+				Set<Course> followedCourse = exists.getFollowingCourses();
+				boolean seguoCorso = false;
+				for (Course c : followedCourse) {
+					if (c.getCode() == Integer.parseInt(courseCode)) {
+						// Vuol dire che il seguente studente segue il corso.
+						seguoCorso = true;
+						AttendancesKey attendancesKey = new AttendancesKey(key, lectureId);
+						Attendances newAttendences = new Attendances();
+						newAttendences.setId(attendancesKey);
+						newAttendences.setFace_recognition_attendances(true);
+						newAttendences.setFace_recognition_accuracy(value);
+						attendanceService.createAttendences(newAttendences);
+						break;
+					}
+				}
+			} 
+		}
+
+
+
+	}
+
 	@GetMapping("/startFingerprintRecognition")
 	public void startFingerprintRecognition() {
 		System.out.println("Start fingerprint recognition");
 
-		// Inizio omunicazione con arduino
+		// Inizio comunicazione con arduino
 		BufferedReader in = null;
 		PrintStream out = null;
 		Socket socket = null;

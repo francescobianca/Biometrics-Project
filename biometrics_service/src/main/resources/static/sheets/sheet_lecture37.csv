@@ -1,0 +1,2 @@
+lecture_id,student_id,face_recognition_attendanes,face_recognition_accuracy,fingerprint_attendances,fingerprint_confidance
+37,1877011,true,0.0,false,0.0
