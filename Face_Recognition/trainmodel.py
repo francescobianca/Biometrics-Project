@@ -1,6 +1,7 @@
  # CODE OF PART 1 - "Load the Dataset"
 import os
 import cv2
+import csv
 import numpy as np
 
 def loadPictures(path):
@@ -48,6 +49,13 @@ encoder = LabelEncoder()
 
 encoder.fit(y_train)
 encoded_y_train = encoder.transform(y_train)
+
+labels = encoder.classes_
+with open('hot-encoding.csv', 'w', newline='') as file:
+    for index, label in zip(range(len(labels)), labels):
+        writer = csv.writer(file)
+        writer.writerow([index, label])
+        
 
 encoder.fit(y_validate)
 encoded_y_validate = encoder.transform(y_validate)

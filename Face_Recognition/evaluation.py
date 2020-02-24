@@ -3,8 +3,11 @@ import pickle
 import cv2
 import numpy as np
 import PySimpleGUI as sg
+from keras import models
 
 def startEvaluation():
+    #Load the saved model
+    model = models.load_model('faces_model.h5')
     video_capture = cv2.VideoCapture(0)
 
     print("[INFO] loading encodings...")
@@ -32,15 +35,15 @@ def startEvaluation():
             face_names = []
             for face_encoding in face_encodings:
 
-                matches = face_recognition.compare_faces(data["encodings"], face_encoding, tolerance=0.6)
+                #matches = face_recognition.compare_faces(data["encodings"], face_encoding, tolerance=0.6)
 
                 name = "Unknown"
- 
-                face_distances = face_recognition.face_distance(data["encodings"], face_encoding)
-                best_match_index = np.argmin(face_distances)
-
-                confidence = face_distances[best_match_index]
-
+                pred = model.predict(face_encoding)
+                print(pred)
+                #face_distances = face_recognition.face_distance(data["encodings"], face_encoding)
+                #best_match_index = np.argmin(face_distances)
+                #confidence = face_distances[best_match_index]
+                '''
                 if matches[best_match_index]:
                     name = data["names"][best_match_index]
                     print(name)
@@ -52,8 +55,8 @@ def startEvaluation():
                     print(attendances[name])
 
                 face_names.append(name)
-
-                
+		'''
+        '''      
         process_this_frame = not process_this_frame
 
         for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -72,7 +75,9 @@ def startEvaluation():
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+	'''
+    '''	
     video_capture.release()
     cv2.destroyAllWindows()
     return attendances
+    '''
