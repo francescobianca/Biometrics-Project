@@ -13,6 +13,8 @@ from tensorflow.keras.layers import MaxPool2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
 
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
 def add_salt_pepper_noise(X_imgs):
     # Need to produce a copy as to not modify the original image
     X_imgs_copy = X_imgs.copy()
@@ -32,79 +34,89 @@ def add_salt_pepper_noise(X_imgs):
     return X_imgs_copy
 
 def getDataset(face_id):
-	cam = cv2.VideoCapture(-1)
-	cam.set(3, 176) # set video width
-	cam.set(4, 144) # set video height
-	
-	count = 0
-	while count < 30:
+    cam = cv2.VideoCapture(-1)
+    cam.set(3, 640) # set video width
+    cam.set(4, 480) # set video height
 
-		ret, img = cam.read()
-		sg.OneLineProgressMeter('Acquisimento foto', count, 30, 'key')
-		# Save the captured image into the datasets folder
-		if not os.path.isdir("dataset/"+str(face_id)):
-			os.mkdir("dataset/"+str(face_id))
+    count = 0
+    while count < 30:
 
-		cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg", img)
+        ret, img = cam.read()
 
-		noise = add_salt_pepper_noise(img)
-		encN = tf.image.encode_jpeg(noise)
-		fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise.jpg")
-		fwriteN = tf.io.write_file(fnameN, encN)
+        faces = faceCascade.detectMultiScale(
+            img,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30)
+        )
 
-		flip = tf.image.flip_left_right(img)
-		encF = tf.image.encode_jpeg(flip)
-		fnameF = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg")
-		fwriteF = tf.io.write_file(fnameF, encF)
+        for (x, y, w, h) in faces:
 
-		central = tf.image.central_crop(img, central_fraction=0.8)
-		encCE = tf.image.encode_jpeg(central)
-		fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central.jpg")
-		fwriteCE = tf.io.write_file(fnameCE, encCE)
-		
-		contrast = tf.image.adjust_contrast(img, contrast_factor=0.6)
-		encC = tf.image.encode_jpeg(contrast)
-		fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast.jpg")
-		fwriteC = tf.io.write_file(fnameC, encC)
-		
-		brightness = tf.image.adjust_brightness(img, delta=0.2)
-		encB = tf.image.encode_jpeg(brightness)
-		fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness.jpg")
-		fwriteB = tf.io.write_file(fnameB, encB)
+            sg.OneLineProgressMeter('Acquisimento foto', count, 30, 'key')
+            # Save the captured image into the datasets folder
+            if not os.path.isdir("dataset/"+str(face_id)):
+                os.mkdir("dataset/"+str(face_id))
 
-		saturation = tf.image.adjust_saturation(img, 5)
-		encS = tf.image.encode_jpeg(saturation)
-		fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation.jpg")
-		fwriteS = tf.io.write_file(fnameS, encS)
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg", img[y:y+h+50,x:x+w])
 
-		hue = tf.image.adjust_hue(img, delta=0.4)
-		encH = tf.image.encode_jpeg(hue)
-		fnameH = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "hue.jpg")
-		fwriteH = tf.io.write_file(fnameH, encH)
+            noise = add_salt_pepper_noise(img[y:y+h+50,x:x+w])
+            encN = tf.image.encode_jpeg(noise)
+            fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise.jpg")
+            fwriteN = tf.io.write_file(fnameN, encN)
 
-		gray = tf.image.rgb_to_grayscale(img)
-		encG = tf.image.encode_jpeg(gray)
-		fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray.jpg")
-		fwriteG = tf.io.write_file(fnameG, encG)
-		
-		cropup = tf.image.crop_to_bounding_box(img, 10, 10, 90, 90)
-		encCRU = tf.image.encode_jpeg(cropup)
-		fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup.jpg")
-		fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
+            flip = tf.image.flip_left_right(img[y:y+h+50,x:x+w])
+            encF = tf.image.encode_jpeg(flip)
+            fnameF = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg")
+            fwriteF = tf.io.write_file(fnameF, encF)
 
-		cropdown = tf.image.crop_to_bounding_box(img, 50, 50, 90, 90)
-		encCRD = tf.image.encode_jpeg(cropdown)
-		fnameCRD = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropdown.jpg")
-		fwriteCRD = tf.io.write_file(fnameCRD, encCRD)	
+            central = tf.image.central_crop(img[y:y+h+50,x:x+w], central_fraction=0.8)
+            encCE = tf.image.encode_jpeg(central)
+            fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central.jpg")
+            fwriteCE = tf.io.write_file(fnameCE, encCE)
 
-		time.sleep(1)
-		count += 1
+            contrast = tf.image.adjust_contrast(img[y:y+h+50,x:x+w], contrast_factor=0.6)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
 
-		
-	cam.release()
-	cv2.destroyAllWindows()
+            brightness = tf.image.adjust_brightness(img[y:y+h+50,x:x+w], delta=0.2)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
 
-	return True
+            saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
+            encS = tf.image.encode_jpeg(saturation)
+            fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation.jpg")
+            fwriteS = tf.io.write_file(fnameS, encS)
+
+            hue = tf.image.adjust_hue(img[y:y+h+50,x:x+w], delta=0.4)
+            encH = tf.image.encode_jpeg(hue)
+            fnameH = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "hue.jpg")
+            fwriteH = tf.io.write_file(fnameH, encH)
+
+            gray = tf.image.rgb_to_grayscale(img[y:y+h+50,x:x+w])
+            encG = tf.image.encode_jpeg(gray)
+            fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray.jpg")
+            fwriteG = tf.io.write_file(fnameG, encG)
+
+            cropup = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 10, 10, 130, 130)
+            encCRU = tf.image.encode_jpeg(cropup)
+            fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup.jpg")
+            fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
+
+            cropdown = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 40, 40, 120, 120)
+            encCRD = tf.image.encode_jpeg(cropdown)
+            fnameCRD = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropdown.jpg")
+            fwriteCRD = tf.io.write_file(fnameCRD, encCRD)
+
+            time.sleep(1)
+            count += 1
+
+
+    cam.release()
+    cv2.destroyAllWindows()
+
+    return True
 
 layout = [[sg.Text('Benvenuto nella sezione di raccolta immagini del tuo volto.')],
            [sg.Text('Per iniziare, inserisci la tua matricola')],
@@ -115,10 +127,10 @@ event, values = window.read()
 window.close()
 face_id = values[0]
 if event == 'Raccolta dati':
-	ret = getDataset(face_id)
-	if ret == True:
-		layout = [[sg.Text('Complimenti matricola '+face_id+'! Operazione conclusa con successo.')],
-	        	[sg.Button('Ok')]]
-		window = sg.Window('Raccolta dati', layout)
-		window.read()
-		window.close()
+    ret = getDataset(face_id)
+    if ret == True:
+        layout = [[sg.Text('Complimenti matricola '+face_id+'! Operazione conclusa con successo.')],
+                [sg.Button('Ok')]]
+        window = sg.Window('Raccolta dati', layout)
+        window.read()
+        window.close()
