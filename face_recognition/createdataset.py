@@ -152,7 +152,6 @@ def getDataset(face_id):
             time.sleep(1)
             count += 1
 
-    cv2.imshow('Video', img)
     cam.release()
     cv2.destroyAllWindows()
 
