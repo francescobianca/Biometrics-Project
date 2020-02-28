@@ -32,7 +32,7 @@ def loadPictures(path):
                 #print("Loading:"+path+dir+"/"+file)
                 
                 img = cv2.imread(path+dir+"/"+file)
-                img_resize = cv2.resize(img, (120, 120)) 
+                img_resize = cv2.resize(img, (200, 200)) 
                 X.append(img_resize)
                 y.append(dir)
     return X,y
@@ -54,9 +54,9 @@ X_test = np.asarray(X_test)
 num_dir = len(np.unique(y_train)) # un check veloce per vedere quante sono le classi
 
 #Reshape for CNN
-X_train = X_train.reshape(-1, 120, 120, 3)   
-X_validateReshape = X_validate.reshape(-1, 120, 120, 3)
-X_test = X_test.reshape(-1, 120, 120, 3)
+X_train = X_train.reshape(-1, 200, 200, 3)   
+X_validateReshape = X_validate.reshape(-1, 200, 200, 3)
+X_test = X_test.reshape(-1, 200, 200, 3)
 
 # Dataset preprocessing
 from sklearn.preprocessing import LabelEncoder
@@ -91,9 +91,9 @@ from keras import layers
 from keras import models
 
 cnn_model= Sequential([
-    Conv2D(filters=36, kernel_size=7, activation='relu', input_shape= (120, 120, 3)),
+    Conv2D(filters=36, kernel_size=7, activation='relu', input_shape= (200, 200, 3)),
     MaxPooling2D(pool_size=2),
-    Conv2D(filters=54, kernel_size=5, activation='relu', input_shape= (120, 120, 3)),
+    Conv2D(filters=54, kernel_size=5, activation='relu', input_shape= (200, 200, 3)),
     MaxPooling2D(pool_size=2),
     Flatten(),
     Dense(2024, activation='relu'),
@@ -114,7 +114,7 @@ cnn_model.summary()
 
 history=cnn_model.fit(
     np.array(X_train), np.array(encoded_y_train), batch_size=512,
-    epochs=10, verbose=2,
+    epochs=30, verbose=2,
     validation_data=(np.array(X_validateReshape),np.array(encoded_y_validateCategorical)),
 )
 

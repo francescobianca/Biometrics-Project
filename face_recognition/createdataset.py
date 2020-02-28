@@ -57,6 +57,53 @@ def getDataset(face_id):
             if not os.path.isdir("dataset/"+str(face_id)):
                 os.mkdir("dataset/"+str(face_id))
 
+            #salvataggio foto facce senza +50
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true50.jpg", img[y:y+h,x:x+w])
+
+            noise = add_salt_pepper_noise(img[y:y+h,x:x+w])
+            encN = tf.image.encode_jpeg(noise)
+            fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise50.jpg")
+            fwriteN = tf.io.write_file(fnameN, encN)
+
+            flip = cv2.flip(img[y:y+h,x:x+w], 1)
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip50.jpg", flip)
+
+            central = tf.image.central_crop(img[y:y+h,x:x+w], central_fraction=0.8)
+            encCE = tf.image.encode_jpeg(central)
+            fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central50.jpg")
+            fwriteCE = tf.io.write_file(fnameCE, encCE)
+
+            contrast = tf.image.adjust_contrast(img[y:y+h,x:x+w], contrast_factor=0.6)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast50.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+
+            brightness = tf.image.adjust_brightness(img[y:y+h,x:x+w], delta=0.2)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness50.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
+
+            #saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
+            #encS = tf.image.encode_jpeg(saturation)
+            #fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation50.jpg")
+            #fwriteS = tf.io.write_file(fnameS, encS)
+
+            hue = tf.image.adjust_hue(img[y:y+h,x:x+w], delta=0.4)
+            encH = tf.image.encode_jpeg(hue)
+            fnameH = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "hue50.jpg")
+            fwriteH = tf.io.write_file(fnameH, encH)
+
+            gray = tf.image.rgb_to_grayscale(img[y:y+h,x:x+w])
+            encG = tf.image.encode_jpeg(gray)
+            fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray50.jpg")
+            fwriteG = tf.io.write_file(fnameG, encG)
+
+            #cropup = tf.image.crop_to_bounding_box(img[y:y+h,x:x+w], 10, 10, 90, 90)
+            #encCRU = tf.image.encode_jpeg(cropup)
+            #fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup50.jpg")
+            #fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
+
+            #salvataggio foto facce con +50
             cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg", img[y:y+h+50,x:x+w])
 
             noise = add_salt_pepper_noise(img[y:y+h+50,x:x+w])
@@ -64,10 +111,8 @@ def getDataset(face_id):
             fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise.jpg")
             fwriteN = tf.io.write_file(fnameN, encN)
 
-            flip = tf.image.flip_left_right(img[y:y+h+50,x:x+w])
-            encF = tf.image.encode_jpeg(flip)
-            fnameF = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg")
-            fwriteF = tf.io.write_file(fnameF, encF)
+            flip = cv2.flip(img[y:y+h+50,x:x+w], 1)
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg", flip)
 
             central = tf.image.central_crop(img[y:y+h+50,x:x+w], central_fraction=0.8)
             encCE = tf.image.encode_jpeg(central)
@@ -84,10 +129,10 @@ def getDataset(face_id):
             fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness.jpg")
             fwriteB = tf.io.write_file(fnameB, encB)
 
-            saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
-            encS = tf.image.encode_jpeg(saturation)
-            fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation.jpg")
-            fwriteS = tf.io.write_file(fnameS, encS)
+            #saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
+            #encS = tf.image.encode_jpeg(saturation)
+            #fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation.jpg")
+            #fwriteS = tf.io.write_file(fnameS, encS)
 
             hue = tf.image.adjust_hue(img[y:y+h+50,x:x+w], delta=0.4)
             encH = tf.image.encode_jpeg(hue)
@@ -99,20 +144,15 @@ def getDataset(face_id):
             fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray.jpg")
             fwriteG = tf.io.write_file(fnameG, encG)
 
-            cropup = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 10, 10, 130, 130)
-            encCRU = tf.image.encode_jpeg(cropup)
-            fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup.jpg")
-            fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
-
-            cropdown = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 40, 40, 120, 120)
-            encCRD = tf.image.encode_jpeg(cropdown)
-            fnameCRD = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropdown.jpg")
-            fwriteCRD = tf.io.write_file(fnameCRD, encCRD)
+            #cropup = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 10, 10, 90, 90)
+            #encCRU = tf.image.encode_jpeg(cropup)
+            #fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup.jpg")
+            #fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
 
             time.sleep(1)
             count += 1
 
-
+    cv2.imshow('Video', img)
     cam.release()
     cv2.destroyAllWindows()
 
