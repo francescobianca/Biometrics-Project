@@ -12,6 +12,8 @@ from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import MaxPool2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
+from PIL import Image
+from PIL import ImageEnhance
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
@@ -57,97 +59,117 @@ def getDataset(face_id):
             if not os.path.isdir("dataset/"+str(face_id)):
                 os.mkdir("dataset/"+str(face_id))
 
-            #salvataggio foto facce senza +50
-            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true50.jpg", img[y:y+h,x:x+w])
+            #salvataggio foto facce senza +30
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true30.jpg", img[y:y+h,x:x+w])
+            #salvataggio foto face con +30
+            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg", img[y:y+h+30,x:x+w])
 
-            noise = add_salt_pepper_noise(img[y:y+h,x:x+w])
-            encN = tf.image.encode_jpeg(noise)
-            fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise50.jpg")
-            fwriteN = tf.io.write_file(fnameN, encN)
+            im = tf.io.read_file("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg")
+            im = tf.image.decode_png(im, 3)
 
-            flip = cv2.flip(img[y:y+h,x:x+w], 1)
-            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip50.jpg", flip)
+            im30 = tf.io.read_file("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true30.jpg")
+            im30 = tf.image.decode_png(im30, 3)
+       
+           
+            #noise = add_salt_pepper_noise(img[y:y+h,x:x+w])
+            #encN = tf.image.encode_jpeg(noise)
+            #fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise50.jpg")
+            #fwriteN = tf.io.write_file(fnameN, encN)
 
-            central = tf.image.central_crop(img[y:y+h,x:x+w], central_fraction=0.8)
-            encCE = tf.image.encode_jpeg(central)
-            fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central50.jpg")
-            fwriteCE = tf.io.write_file(fnameCE, encCE)
+            # flip orizzontale della foto
+            flip = tf.image.flip_left_right(im)
+            encF = tf.image.encode_jpeg(flip)
+            fnameF = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg")
+            fwriteF = tf.io.write_file(fnameF, encF)
+            flip = tf.image.flip_left_right(im30)
+            encF = tf.image.encode_jpeg(flip)
+            fnameF = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg")
+            fwriteF = tf.io.write_file(fnameF, encF)
 
-            contrast = tf.image.adjust_contrast(img[y:y+h,x:x+w], contrast_factor=0.6)
-            encC = tf.image.encode_jpeg(contrast)
-            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast50.jpg")
-            fwriteC = tf.io.write_file(fnameC, encC)
-
-            brightness = tf.image.adjust_brightness(img[y:y+h,x:x+w], delta=0.2)
-            encB = tf.image.encode_jpeg(brightness)
-            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness50.jpg")
-            fwriteB = tf.io.write_file(fnameB, encB)
-
-            #saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
-            #encS = tf.image.encode_jpeg(saturation)
-            #fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation50.jpg")
-            #fwriteS = tf.io.write_file(fnameS, encS)
-
-            hue = tf.image.adjust_hue(img[y:y+h,x:x+w], delta=0.4)
-            encH = tf.image.encode_jpeg(hue)
-            fnameH = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "hue50.jpg")
-            fwriteH = tf.io.write_file(fnameH, encH)
-
-            gray = tf.image.rgb_to_grayscale(img[y:y+h,x:x+w])
-            encG = tf.image.encode_jpeg(gray)
-            fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray50.jpg")
-            fwriteG = tf.io.write_file(fnameG, encG)
-
-            #cropup = tf.image.crop_to_bounding_box(img[y:y+h,x:x+w], 10, 10, 90, 90)
-            #encCRU = tf.image.encode_jpeg(cropup)
-            #fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup50.jpg")
-            #fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
-
-            #salvataggio foto facce con +50
-            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "true.jpg", img[y:y+h+50,x:x+w])
-
-            noise = add_salt_pepper_noise(img[y:y+h+50,x:x+w])
-            encN = tf.image.encode_jpeg(noise)
-            fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise.jpg")
-            fwriteN = tf.io.write_file(fnameN, encN)
-
-            flip = cv2.flip(img[y:y+h+50,x:x+w], 1)
-            cv2.imwrite("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "flip.jpg", flip)
-
-            central = tf.image.central_crop(img[y:y+h+50,x:x+w], central_fraction=0.8)
+            # centrare la foto
+            central = tf.image.central_crop(im, central_fraction=0.8)
             encCE = tf.image.encode_jpeg(central)
             fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central.jpg")
             fwriteCE = tf.io.write_file(fnameCE, encCE)
+            central = tf.image.central_crop(im30, central_fraction=0.8)
+            encCE = tf.image.encode_jpeg(central)
+            fnameCE = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "central30.jpg")
+            fwriteCE = tf.io.write_file(fnameCE, encCE)
 
-            contrast = tf.image.adjust_contrast(img[y:y+h+50,x:x+w], contrast_factor=0.6)
+            # aumentare contrasto foto di 0.9
+            contrast = tf.image.adjust_contrast(im, contrast_factor=0.9)
             encC = tf.image.encode_jpeg(contrast)
-            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast.jpg")
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast9.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+            contrast = tf.image.adjust_contrast(im30, contrast_factor=0.9)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast309.jpg")
             fwriteC = tf.io.write_file(fnameC, encC)
 
-            brightness = tf.image.adjust_brightness(img[y:y+h+50,x:x+w], delta=0.2)
+            # aumentare contrasto foto di 1.5
+            contrast = tf.image.adjust_contrast(im, contrast_factor=1.5)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast15.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+            contrast = tf.image.adjust_contrast(im30, contrast_factor=1.5)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast3015.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+
+            # aumentare contrasto foto di 2
+            contrast = tf.image.adjust_contrast(im, contrast_factor=2)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast2.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+            contrast = tf.image.adjust_contrast(im30, contrast_factor=2)
+            encC = tf.image.encode_jpeg(contrast)
+            fnameC = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "contrast302.jpg")
+            fwriteC = tf.io.write_file(fnameC, encC)
+
+            # aumentare luminosità foto di 0.1
+            brightness = tf.image.adjust_brightness(im, delta=0.1)
             encB = tf.image.encode_jpeg(brightness)
-            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness.jpg")
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness1.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
+            brightness = tf.image.adjust_brightness(im30, delta=0.1)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness301.jpg")
             fwriteB = tf.io.write_file(fnameB, encB)
 
-            #saturation = tf.image.adjust_saturation(img[y:y+h+50,x:x+w], 5)
-            #encS = tf.image.encode_jpeg(saturation)
-            #fnameS = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "saturation.jpg")
-            #fwriteS = tf.io.write_file(fnameS, encS)
+            # aumentare luminosità foto di 0.2
+            brightness = tf.image.adjust_brightness(im, delta=0.2)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness2.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
+            brightness = tf.image.adjust_brightness(im30, delta=0.2)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness302.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
 
-            hue = tf.image.adjust_hue(img[y:y+h+50,x:x+w], delta=0.4)
-            encH = tf.image.encode_jpeg(hue)
-            fnameH = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "hue.jpg")
-            fwriteH = tf.io.write_file(fnameH, encH)
+            # aumentare luminosità foto di 0.5
+            brightness = tf.image.adjust_brightness(im, delta=0.3)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness3.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
+            brightness = tf.image.adjust_brightness(im30, delta=0.3)
+            encB = tf.image.encode_jpeg(brightness)
+            fnameB = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "brightness303.jpg")
+            fwriteB = tf.io.write_file(fnameB, encB)
 
-            gray = tf.image.rgb_to_grayscale(img[y:y+h+50,x:x+w])
+            # rendere bianconero la foto
+            gray = tf.image.rgb_to_grayscale(im)
             encG = tf.image.encode_jpeg(gray)
             fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray.jpg")
             fwriteG = tf.io.write_file(fnameG, encG)
+            gray = tf.image.rgb_to_grayscale(im30)
+            encG = tf.image.encode_jpeg(gray)
+            fnameG = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "gray30.jpg")
+            fwriteG = tf.io.write_file(fnameG, encG)        
 
-            #cropup = tf.image.crop_to_bounding_box(img[y:y+h+50,x:x+w], 10, 10, 90, 90)
-            #encCRU = tf.image.encode_jpeg(cropup)
-            #fnameCRU = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "cropup.jpg")
-            #fwriteCRU = tf.io.write_file(fnameCRU, encCRU)
+            #noise = add_salt_pepper_noise(img3)
+            #encN = tf.image.encode_jpeg(noise)
+            #fnameN = tf.constant("dataset/"+ str(face_id) + "/" + str(face_id) + '.' + str(count) + "noise.jpg")
+            #fwriteN = tf.io.write_file(fnameN, encN)
 
             time.sleep(1)
             count += 1
