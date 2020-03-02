@@ -14,15 +14,15 @@ import csv
 from keras import models
 from keras.preprocessing import image
 
-with open('face_model', 'rb') as pickle_file:
-    clf = pickle.load(pickle_file)
-
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-
-
 def startEvaluation():
-    video_capture = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
+    with open('face_model', 'rb') as pickle_file:
+        clf = pickle.load(pickle_file)
 
+    faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+
+    #video_capture = cv2.VideoCapture(-1)
+    video_capture = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
     process_this_frame = True
     attendances = {}
 
@@ -46,10 +46,12 @@ def startEvaluation():
                 name = clf.predict([encoding])[0]
                 r = attendances.get(name, None)
                 if r == None:
-                    attendances[name] = 1
-                elif attendances[name] > 0:
-                    attendances[name] += 1
-
+                    attendances[name] = [1, confidence, confidence]
+                elif attendances[name][0] > 0:
+                    attendances[name][0] += 1
+                    attendances[name][1] += confidence
+                    if attendances[name][2] < confidence:
+                        attendances[name][2] = confidence
                 
         cv2.imshow('Video', frame)
 
@@ -58,7 +60,5 @@ def startEvaluation():
 
     video_capture.release()
     cv2.destroyAllWindows()
-    return attendances
 
-attendancesReturn = startEvaluation()
-print(attendancesReturn)
+    return attendances
