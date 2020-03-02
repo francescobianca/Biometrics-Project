@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +37,8 @@ import it.sapienza.cs.biometrics.model.Course;
 import it.sapienza.cs.biometrics.model.Lecture;
 import it.sapienza.cs.biometrics.model.Student;
 import it.sapienza.cs.biometrics.model.User;
+import it.sapienza.cs.biometrics.model.DTO.AttendanceDTO;
+import it.sapienza.cs.biometrics.model.DTO.AttendancesJsonDTO;
 import it.sapienza.cs.biometrics.model.DTO.LectureDTO;
 import it.sapienza.cs.biometrics.model.DTO.ProfessorDTO;
 import it.sapienza.cs.biometrics.model.DTO.UserLoginDTO;
@@ -93,11 +97,16 @@ public class BiometricController {
 		return courseService.createLecture(lectureDTO);
 	}
 
-	@GetMapping("/faceRecognitionOutput")
-	public void faceRecognitionOutput(@RequestParam String attendences, @RequestParam Integer lectureId,
-			@RequestParam String courseCode) {
-		System.out.println(attendences);
+	@PostMapping("/faceRecognitionOutput")
+	public void faceRecognitionOutput(@RequestBody ArrayList<AttendancesJsonDTO> attendances) {
+		for (AttendancesJsonDTO item : attendances) {
+			System.out.println(item.getMatricola());
+			System.out.println(item.getAvg_accuracy());
+			System.out.println(item.getCount());
+		}
+		
 
+		/*
 		String parsedAttendences = attendences.substring(1, attendences.length() - 1);
 		System.out.println(parsedAttendences);
 
@@ -120,15 +129,10 @@ public class BiometricController {
 
 			face_recognition.put(matricola, accuracy);
 		}
+		*/
 
 		// Ora che ho matricola e accuracy bisogna salvarle nel db:
 		/*
-		 * Optional<Student> s = studentService.findById(matricola); if (s.isPresent())
-		 * { // Se s è uno studente vero procedo a salvare i dati altrimenti se non
-		 * esiste // non faccio nulla
-		 * 
-		 * }
-		 */
 		System.out.println("Size di Face"+face_recognition.size());
 		
 		
@@ -143,10 +147,6 @@ public class BiometricController {
 				System.out.println("HO TROVATO MATCH CON QUESTA CHIAVE: "+key);
 				System.out.println(s.get().getMatricola());
 				
-				/*
-				 * Se esiste lo studente procedo altrimenti non faccio nulla. Non servono
-				 * controlli su attendences in quanto face_recognition è il primo controllo
-				 */
 				Student exists = s.get();
 
 				// Va fatto il controllo sul corso
@@ -167,7 +167,8 @@ public class BiometricController {
 				}
 			} 
 		}
-
+		
+		*/
 
 
 	}

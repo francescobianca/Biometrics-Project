@@ -13,6 +13,7 @@ import PySimpleGUI as sg
 import csv
 from keras import models
 from keras.preprocessing import image
+import json
 
 def startEvaluation():
     with open('face_model', 'rb') as pickle_file:
@@ -21,8 +22,8 @@ def startEvaluation():
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
 
-    #video_capture = cv2.VideoCapture(-1)
-    video_capture = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
+    video_capture = cv2.VideoCapture(-1)
+    #video_capture = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
     process_this_frame = True
     attendances = {}
 
@@ -58,7 +59,18 @@ def startEvaluation():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    attendancesJson = []
+    for attendance in attendances:
+        media = attendances[attendance][1]/attendances[attendance][0]
+        item = { attendance: {
+                        'count': attendances[attendance][0],
+                        'avg': media,
+                        'accuracy': attendances[attendance][2]
+        }}
+        attendancesJson.append(item)
+
+
     video_capture.release()
     cv2.destroyAllWindows()
-
-    return attendances
+    print(attendancesJson)
+    return json.dumps(attendancesJson)

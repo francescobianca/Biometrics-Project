@@ -259,14 +259,33 @@ export default function FullWidthGrid({history}) {
         API_Face.get("evaluation").then(res => {
             console.log("Output Face Recognition")
         
-            var outputFaceRecognition = res.data[1];
+            var outputFaceRecognition = res.data;
             console.log(outputFaceRecognition)
 
-            // Ora in outputFaceRecognition ho le presenze prese tramite il face recognition
             
-            BaseInstance.get("faceRecognitionOutput", { params: { "attendences": outputFaceRecognition, "lectureId": lectureId, "courseCode" : selectedCourseJSON.code} }).then(res => {
+            
+            var attendancesJSON = JSON.parse(outputFaceRecognition);
+            //console.log(attendancesJSON)
+            
+            var bodyAttendences = []
+
+            attendancesJSON.forEach((item) => {
+                Object.entries(item).forEach(([key, val]) => {
+                  var json = {matricola: key, count: val.count, avg_accuracy: val.avg, accuracy: val.accuracy}
+                  bodyAttendences.push(json)
+                });
+              });
+
+            
+            BaseInstance.post("faceRecognitionOutput", bodyAttendences).then(res =>{
                 console.log(res)
             })
+
+            //BaseInstance.post("faceRecognitionOutput", {course: courseCode, description: description, date: selectedDate}).then(res =>{
+            
+            /*BaseInstance.get("faceRecognitionOutput", { params: { "attendences": attendancesJSON, "lectureId": lectureId, "courseCode" : selectedCourseJSON.code} }).then(res => {
+                console.log(res)
+            })*/
 
         })
 

@@ -2,3 +2,10 @@ TO DO BIOMETRICS PROJECT
 
 1) Interfaccia completata --> resta da fare una prova con il fingerprint e il face recognition insieme. Cosa succede 
    se mando un array di fingerprint vuoto? Bisogna controllare questa cosa. 
+
+2) aggiungere nel DAO di attendances la colonna media e la colonna count. Completare la funzione public void faceRecognitionOutput(@RequestBody ArrayList<AttendancesJsonDTO> attendances) { 
+ricorda di rimettere lectureID e courseID come parametri 
+
+3) modificare anche la funzione del csv aggiungendo i campi media e count
+
+4) aggiungere foto andrea con occcihali in dataset
