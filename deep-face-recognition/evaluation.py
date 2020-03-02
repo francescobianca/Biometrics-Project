@@ -21,7 +21,7 @@ faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
 
 def startEvaluation():
-    video_capture = cv2.VideoCapture(-1)
+    video_capture = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
 
     process_this_frame = True
     attendances = {}
@@ -42,7 +42,7 @@ def startEvaluation():
             print(clf.predict([encoding])[0])
             print(confidence)
 
-            if confidence > 0.90:
+            if confidence > 0.85:
                 name = clf.predict([encoding])[0]
                 r = attendances.get(name, None)
                 if r == None:

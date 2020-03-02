@@ -36,7 +36,7 @@ def add_salt_pepper_noise(X_imgs):
     return X_imgs_copy
 
 def getDataset(face_id):
-    cam = cv2.VideoCapture(-1)
+    cam = cv2.VideoCapture("/dev/v4l/by-id/usb-Microsoft_Microsoft®_LifeCam_HD-3000-video-index0")
     cam.set(3, 640) # set video width
     cam.set(4, 480) # set video height
 
