@@ -1,10 +1,9 @@
 # Biometrics-Project
 Project for Biometric System course - La Sapienza Università di Roma
 
-*Work in progress*
-
-1. Video stream face recognition implementation (AmazonAWS or OpenCV+CNN ?)
-2. Fingerprint system implentation with Raspberry
+We want to recognize who is attending a lecture using:
+1. Video stream face recognition implementation (OpenCv, FaceNet, SVM)
+2. Fingerprint system implentation with Arduino
 
 *Service:* 
 
