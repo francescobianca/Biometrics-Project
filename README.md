@@ -19,7 +19,7 @@ In the directory biometrics_web-app install node modules
 
 ### `npm install`
 
-and them
+and then
 
 ### `npm start`
 
