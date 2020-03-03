@@ -13,9 +13,13 @@ Made via spring boot. Just import it as a maven project on Eclipse. (DB on Postg
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Install user interface
 
-In the project directory, you can run:
+In the directory biometrics_web-app install node modules
+
+### `npm install`
+
+and them
 
 ### `npm start`
 
