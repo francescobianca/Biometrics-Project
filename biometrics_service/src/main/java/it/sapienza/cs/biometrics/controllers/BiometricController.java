@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sun.tools.sjavac.server.SysInfo;
-
 import it.sapienza.cs.biometrics.services.AttendanceService;
 import it.sapienza.cs.biometrics.services.CourseService;
 import it.sapienza.cs.biometrics.services.LoginService;
@@ -37,12 +35,10 @@ import it.sapienza.cs.biometrics.model.Course;
 import it.sapienza.cs.biometrics.model.Lecture;
 import it.sapienza.cs.biometrics.model.Student;
 import it.sapienza.cs.biometrics.model.User;
-import it.sapienza.cs.biometrics.model.DTO.AttendanceDTO;
 import it.sapienza.cs.biometrics.model.DTO.AttendancesJsonDTO;
 import it.sapienza.cs.biometrics.model.DTO.LectureDTO;
 import it.sapienza.cs.biometrics.model.DTO.ProfessorDTO;
 import it.sapienza.cs.biometrics.model.DTO.UserLoginDTO;
-import it.sapienza.cs.biometrics.repositories.AttendanceDAO;
 
 @CrossOrigin("*")
 @RestController
@@ -56,8 +52,6 @@ public class BiometricController {
 	private AttendanceService attendanceService;
 	@Autowired
 	private StudentService studentService;
-	@Autowired
-	private UploadImageService uploadImageService;
 
 	@PostMapping("/login")
 	public User login(@RequestBody UserLoginDTO userLoginDTO) {
@@ -98,55 +92,13 @@ public class BiometricController {
 	}
 
 	@PostMapping("/faceRecognitionOutput")
-	public void faceRecognitionOutput(@RequestBody ArrayList<AttendancesJsonDTO> attendances) {
+	public void faceRecognitionOutput(@RequestBody ArrayList<AttendancesJsonDTO> attendances,
+			@RequestParam Integer lectureId, @RequestParam String courseCode) {
+
+		// Mi arriva una lista composta da oggetti matricola, count, avg e accuracy
 		for (AttendancesJsonDTO item : attendances) {
-			System.out.println(item.getMatricola());
-			System.out.println(item.getAvg_accuracy());
-			System.out.println(item.getCount());
-		}
-		
-
-		/*
-		String parsedAttendences = attendences.substring(1, attendences.length() - 1);
-		System.out.println(parsedAttendences);
-
-		// Creo una struttura per rimuovere i duplicati
-		HashMap<String, Float> face_recognition = new HashMap<>();
-
-		// Bisogna fare lo split sulle virgole
-		String[] split = parsedAttendences.split(",");
-
-		// Adesso su string split ho linee di questo tipo: "1473573":0.49357890956714756
-		for (String splitted : split) {
-
-			// Devo fare nuovamente split sui ':'
-			String[] student_row = splitted.split(":");
-			// Adesso ho student_row[0] = "1473573" e student_row[1] = 0.49357890956714756
-
-			String matricola = student_row[0].substring(1, student_row[0].length() - 1);
-			float accuracy = Float.parseFloat(student_row[1]);
-
-
-			face_recognition.put(matricola, accuracy);
-		}
-		*/
-
-		// Ora che ho matricola e accuracy bisogna salvarle nel db:
-		/*
-		System.out.println("Size di Face"+face_recognition.size());
-		
-		
-		for (Entry<String, Float> entry : face_recognition.entrySet()) {
-			String key = entry.getKey();
-			Float value = entry.getValue();
-			System.out.println("ID: " + key + " Value: " + value);
-
-			Optional<Student> s = studentService.findById(key);
+			Optional<Student> s = studentService.findById(item.getMatricola());
 			if (s.isPresent()) {
-				
-				System.out.println("HO TROVATO MATCH CON QUESTA CHIAVE: "+key);
-				System.out.println(s.get().getMatricola());
-				
 				Student exists = s.get();
 
 				// Va fatto il controllo sul corso
@@ -156,20 +108,20 @@ public class BiometricController {
 					if (c.getCode() == Integer.parseInt(courseCode)) {
 						// Vuol dire che il seguente studente segue il corso.
 						seguoCorso = true;
-						AttendancesKey attendancesKey = new AttendancesKey(key, lectureId);
+						AttendancesKey attendancesKey = new AttendancesKey(exists.getMatricola(), lectureId);
 						Attendances newAttendences = new Attendances();
 						newAttendences.setId(attendancesKey);
 						newAttendences.setFace_recognition_attendances(true);
-						newAttendences.setFace_recognition_accuracy(value);
+						newAttendences.setCount(item.getCount());
+						newAttendences.setFace_recognition_accuracy(item.getAccuracy());
+						newAttendences.setAvg_accuracy(item.getAvg_accuracy());
 						attendanceService.createAttendences(newAttendences);
 						break;
 					}
 				}
-			} 
-		}
-		
-		*/
+			}
 
+		}
 
 	}
 
@@ -295,12 +247,22 @@ public class BiometricController {
 					Lecture l = courseService.findLectureById(lectureId);
 					newAttendences.setLecture(l);
 					newAttendences.setFingerprint_attendances(true);
-					newAttendences.setFingerprint_confidance(Float.valueOf(value));
+					
+					// Bisogna normalizzare la confidance che viene data nel range 0 - 255
+					Float confidance = Float.valueOf(value);
+					confidance = confidance / 255.0f;
+					
+					newAttendences.setFingerprint_confidance(confidance);
 					attendanceService.createAttendences(newAttendences);
 				} else {
 					// Qua c'è già un'istanza della presenza
 					a.get().setFingerprint_attendances(true);
-					a.get().setFingerprint_confidance(Float.valueOf(value));
+					
+					// Bisogna normalizzare la confidance che viene data nel range 0 - 255
+					Float confidance = Float.valueOf(value);
+					confidance = confidance / 255.0f;
+					
+					a.get().setFingerprint_confidance(confidance);
 					attendanceService.createAttendences(a.get());
 				}
 
@@ -334,8 +296,9 @@ public class BiometricController {
 		// Ho un lectureId : mi servono le presenze per quella lectureId
 		Set<Attendances> lectureAttendances = attendanceService.getLectureAttendances(lectureId);
 		// Adesso tramite il set delle presenze posso prendere lo sheet delle presenze
-		String[] HEADERS = { "lecture_id", "student_id", "face_recognition_attendanes", "face_recognition_accuracy",
-				"fingerprint_attendances", "fingerprint_confidance" };
+		String[] HEADERS = { "lecture_id", "student_id", "face_recognition_attendanes", "face_recognition_count",
+				"face_recognition_accuracy", "face_recognition_avg_accuracy", "fingerprint_attendances",
+				"fingerprint_confidance" };
 
 		try {
 			String file_location = "sheets/sheet_lecture" + Integer.toString(lectureId) + ".csv";
@@ -346,7 +309,9 @@ public class BiometricController {
 					printer.printRecord(attendances_line.getLecture().getLectureId(),
 							attendances_line.getStudent().getMatricola(),
 							attendances_line.isFace_recognition_attendances(),
+							attendances_line.getCount(),
 							attendances_line.getFace_recognition_accuracy(),
+							attendances_line.getAvg_accuracy(),
 							attendances_line.isFingerprint_attendances(), attendances_line.getFingerprint_confidance());
 				}
 			}

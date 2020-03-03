@@ -32,6 +32,10 @@ public class Attendances {
     
     private float face_recognition_accuracy;
     
+    private int count; // Numero di volte che la persona è stata conteggiata
+    
+    private float avg_accuracy; // Media dell'accuracy
+    
     private boolean fingerprint_attendances;
     
 	private float fingerprint_confidance;
@@ -74,6 +78,22 @@ public class Attendances {
 
 	public void setFace_recognition_accuracy(float face_recognition_accuracy) {
 		this.face_recognition_accuracy = face_recognition_accuracy;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+	
+	public void setCount(int count) {
+		this.count = count;
+	}
+	
+	public float getAvg_accuracy() {
+		return avg_accuracy;
+	}
+	
+	public void setAvg_accuracy(float avg_accuracy) {
+		this.avg_accuracy = avg_accuracy;
 	}
 
 	public boolean isFingerprint_attendances() {

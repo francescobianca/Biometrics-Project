@@ -276,13 +276,11 @@ export default function FullWidthGrid({history}) {
                 });
               });
 
-            
-            BaseInstance.post("faceRecognitionOutput", bodyAttendences).then(res =>{
+            // Da controllare se funziona il passaggio dei parametri
+            BaseInstance.post("faceRecognitionOutput", bodyAttendences, { params: { "lectureId": lectureId, "courseCode" : selectedCourseJSON.code } }).then(res =>{
                 console.log(res)
             })
 
-            //BaseInstance.post("faceRecognitionOutput", {course: courseCode, description: description, date: selectedDate}).then(res =>{
-            
             /*BaseInstance.get("faceRecognitionOutput", { params: { "attendences": attendancesJSON, "lectureId": lectureId, "courseCode" : selectedCourseJSON.code} }).then(res => {
                 console.log(res)
             })*/
