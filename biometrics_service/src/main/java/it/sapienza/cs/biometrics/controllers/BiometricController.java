@@ -95,6 +95,10 @@ public class BiometricController {
 	public void faceRecognitionOutput(@RequestBody ArrayList<AttendancesJsonDTO> attendances,
 			@RequestParam Integer lectureId, @RequestParam String courseCode) {
 
+		System.out.println("Numero di presenze face:" + attendances.size());
+		System.out.println("LectureID: " + lectureId);
+		System.out.println("CourseID: " + courseCode);
+
 		// Mi arriva una lista composta da oggetti matricola, count, avg e accuracy
 		for (AttendancesJsonDTO item : attendances) {
 			Optional<Student> s = studentService.findById(item.getMatricola());
@@ -247,21 +251,21 @@ public class BiometricController {
 					Lecture l = courseService.findLectureById(lectureId);
 					newAttendences.setLecture(l);
 					newAttendences.setFingerprint_attendances(true);
-					
+
 					// Bisogna normalizzare la confidance che viene data nel range 0 - 255
 					Float confidance = Float.valueOf(value);
 					confidance = confidance / 255.0f;
-					
+
 					newAttendences.setFingerprint_confidance(confidance);
 					attendanceService.createAttendences(newAttendences);
 				} else {
 					// Qua c'è già un'istanza della presenza
 					a.get().setFingerprint_attendances(true);
-					
+
 					// Bisogna normalizzare la confidance che viene data nel range 0 - 255
 					Float confidance = Float.valueOf(value);
 					confidance = confidance / 255.0f;
-					
+
 					a.get().setFingerprint_confidance(confidance);
 					attendanceService.createAttendences(a.get());
 				}
@@ -308,10 +312,8 @@ public class BiometricController {
 				for (Attendances attendances_line : lectureAttendances) {
 					printer.printRecord(attendances_line.getLecture().getLectureId(),
 							attendances_line.getStudent().getMatricola(),
-							attendances_line.isFace_recognition_attendances(),
-							attendances_line.getCount(),
-							attendances_line.getFace_recognition_accuracy(),
-							attendances_line.getAvg_accuracy(),
+							attendances_line.isFace_recognition_attendances(), attendances_line.getCount(),
+							attendances_line.getFace_recognition_accuracy(), attendances_line.getAvg_accuracy(),
 							attendances_line.isFingerprint_attendances(), attendances_line.getFingerprint_confidance());
 				}
 			}

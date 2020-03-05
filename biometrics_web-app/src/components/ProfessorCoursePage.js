@@ -192,7 +192,7 @@ export default function FullWidthGrid({history}) {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2020-02-01T21:00:00'))
+    const [selectedDate, setSelectedDate] = React.useState(new Date('2020-03-04T21:00:00'))
     const [description, setSelectedDescription] = React.useState("")
 
     //console.log(selectedCourseJSON.code)

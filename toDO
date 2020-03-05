@@ -9,3 +9,15 @@ ricorda di rimettere lectureID e courseID come parametri
 3) modificare anche la funzione del csv aggiungendo i campi media e count
 
 4) aggiungere foto andrea con occcihali in dataset
+
+------------------------------------------------------------------------------------
+
+Istruzioni utili:
+
+Bisogna avviare server arduino su eclipse, server spring, server React e APIevaluation
+
+Prima di premere termina fingerprint recognition premere bottone su arduino
+
+Attiva CORS Policy sy Google altrimenti problemi con API python
+
+Chiama API python con workon cv
