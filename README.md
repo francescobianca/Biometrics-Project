@@ -5,6 +5,11 @@ We want to recognize who is attending a lecture using:
 1. Video stream face recognition implementation (OpenCv, FaceNet, SVM)
 2. Fingerprint system implentation with Arduino
 
+<h3> Click on img and watch the demo!</h3>
+
+[![Watch the video](https://miro.medium.com/max/3200/1*REkyBlBoacF-qn65zhIzVg.jpeg)](https://www.youtube.com/watch?v=SmvbhCbIsj0&feature=youtu.be)
+
+
 *Service:* 
 
 Made via spring boot. Just import it as a maven project on Eclipse. (DB on PostgresSQL managed with PgAdmin4)
