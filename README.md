@@ -9,6 +9,7 @@ We want to recognize who is attending a lecture using:
 
 [![Watch the video](https://miro.medium.com/max/3200/1*REkyBlBoacF-qn65zhIzVg.jpeg)](https://www.youtube.com/watch?v=SmvbhCbIsj0&feature=youtu.be)
 
+<h3> Results </h3>
 
 *Service:* 
 
